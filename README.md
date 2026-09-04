@@ -1,13 +1,14 @@
 # Catris ($CATRIS)
 
-Original-sprite cat tetris on **Robinhood Chain (4663)**. A 3% PONS v2 creator tax
-feeds a vault — never an EOA — split **60 / 30 / 10** across a 15-minute epoch
-prize, holder drip, and team.
+Original-sprite cat tetris on **Robinhood Chain (4663)**. Launch on
+[letscash.fun](https://letscash.fun/launch) at **3%** trade tax. The creator
+ETH stream feeds a vault — never an EOA — split **60 / 30 / 10** across a
+15-minute epoch prize, holder drip, and team.
 
 - Play: [catris.xyz](https://catris.xyz)
 - X: [@catrisXYZ](https://x.com/catrisXYZ)
 - Telegram: [t.me/catrisXYZ](https://t.me/catrisXYZ)
-- Launchpad: [PONS v2](https://www.ponsfamily.com/launchpad/create)
+- Launchpad: [letscash.fun](https://letscash.fun/launch)
 
 ## Stack
 

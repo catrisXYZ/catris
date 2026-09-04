@@ -44,7 +44,7 @@ async function seedIfEmpty() {
       ${"Epoch " + season + " — Opening Litter"},
       to_timestamp(${Date.now() / 1000}),
       to_timestamp(${(Date.now() + 15 * 60) / 1000}),
-      ${"60% of harvested PONS tax pays this 15-minute pot"}
+      ${"60% of harvested letscash.fun tax pays this 15-minute pot"}
     )
     on conflict (season) do nothing
   `;

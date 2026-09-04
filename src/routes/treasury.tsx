@@ -5,7 +5,7 @@ import { PageWell } from "@/components/game/PageWell";
 import {
   CATRIS,
   FEE_SPLIT,
-  PONS,
+  LETSCASH,
   explorerAddress,
   isDeployed,
 } from "@/lib/chain";
@@ -40,8 +40,9 @@ function TreasuryPage() {
           <p className="text-xs tracking-[0.2em] text-muted uppercase">On-chain vault</p>
           <h1 className="mt-2 font-display text-4xl italic tracking-tight">Vault</h1>
           <p className="mt-3 max-w-2xl text-muted">
-            Set this contract as the PONS <span className="text-fg">creatorFeeRecipient</span>.
-            The keeper claims escrow every 15 minutes and splits 60 / 30 / 10.
+            Hand the letscash.fun creator stream to this contract with{" "}
+            <span className="text-fg">updateCreator</span>. The keeper harvests
+            ETH every 15 minutes and splits 60 / 30 / 10.
           </p>
         </div>
         <PageWell variant="vault" />
@@ -51,15 +52,15 @@ function TreasuryPage() {
         <Panel
           label="Creator tax"
           value={`${CATRIS.creatorTaxBps / 100}%`}
-          hint="creatorTaxBps = 300, fixed at launch"
+          hint="3% fee config on letscash.fun, fixed at launch"
         />
         <Panel
-          label="Escrow (ETH)"
+          label="Creator stream (ETH)"
           value={escrow === null ? "—" : formatEth(escrow)}
           hint={
             isDeployed(CATRIS.vault)
-              ? "PONS escrow balance of the vault"
-              : "Connect a wallet to peek escrow for that address"
+              ? "Pending creator ETH for the vault"
+              : "Connect a wallet to peek the stream for that address"
           }
         />
         <Panel
@@ -82,16 +83,16 @@ function TreasuryPage() {
       <div className="mt-10 rounded-xl border border-border bg-surface p-5">
         <h2 className="font-display text-2xl italic">Addresses</h2>
         <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
-          <Addr label="PONS factory" value={PONS.factory} />
-          <Addr label="PONS fee escrow" value={PONS.feeEscrow} />
+          <Addr label="letscash.fun factory" value={LETSCASH.factory} />
+          <Addr label="letscash.fun hook" value={LETSCASH.hook} />
           <Addr label="Catris vault" value={CATRIS.vault} />
           <Addr label="Catris board" value={CATRIS.board} />
           <Addr label="CATRIS token" value={CATRIS.token} />
         </dl>
         <div className="mt-6">
           <Button variant="outline" asChild>
-            <a href={PONS.docs} target="_blank" rel="noreferrer">
-              PONS v2 docs
+            <a href={LETSCASH.launch} target="_blank" rel="noreferrer">
+              letscash.fun/launch
             </a>
           </Button>
         </div>

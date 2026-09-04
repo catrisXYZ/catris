@@ -14,6 +14,7 @@ const NAV = [
 
 const SOCIAL = [
   { href: LINKS.site, label: "catris.xyz" },
+  { href: LINKS.launchpad, label: "letscash.fun" },
   { href: LINKS.x, label: "X" },
   { href: LINKS.telegram, label: "Telegram" },
   { href: LINKS.github, label: "GitHub" },
@@ -60,7 +61,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
       {pathname !== "/play" && (
       <footer className="border-t border-border">
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-8 text-sm text-muted sm:flex-row sm:items-center sm:justify-between sm:px-6">
-          <p>Catris on Robinhood Chain. 3% creator tax, 15-minute pots.</p>
+          <p>Catris on Robinhood Chain. Launched on letscash.fun. 15-minute pots.</p>
           <nav className="flex flex-wrap items-center gap-x-4 gap-y-1">
             {SOCIAL.map((s) => (
               <a

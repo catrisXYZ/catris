@@ -2,9 +2,9 @@
 pragma solidity ^0.8.24;
 
 /// @title CatrisVault
-/// @notice Receives the PONS v2 3% creator tax and splits:
+/// @notice Receives the letscash.fun 3% creator stream and splits:
 ///         60% epoch prize, 30% holder drip (merkle), 10% team.
-///         Set this address as creatorFeeRecipient at launch.
+///         Point updateCreator at this address after launch.
 interface IFeeEscrow {
     function balanceOf(address recipient) external view returns (uint256);
     function claim() external;

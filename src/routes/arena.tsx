@@ -46,8 +46,9 @@ function ArenaPage() {
             <p className="font-display text-3xl tabular tracking-tight text-accent">{clock}</p>
           </div>
           <p className="mt-3 max-w-2xl text-muted">
-            60% of every harvested tax drop pays this window’s top score. The keeper
-            settles on the Board; holders claim the 30% drip from the merkle root.
+            60% of every harvested letscash.fun tax drop pays this window’s top
+            score. The keeper settles on the Board; holders claim the 30% drip
+            from the merkle root.
           </p>
         </div>
         <PageWell variant="arena" />

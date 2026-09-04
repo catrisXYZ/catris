@@ -33,25 +33,29 @@ export const robinhoodTestnet = defineChain({
   },
 });
 
-/** Official PONS v2 contracts on Robinhood Chain (chain 4663). */
+/** letscash.fun launchpad on Robinhood Chain (chain 4663). */
+export const LETSCASH = {
+  factory: "0x5bd1Fbe78a78fe8236fa00CF48fbEBA74ae34661" as Address,
+  hook: "0x75A54357D9C78a2Db19004a5FDc76c50F9242AEC" as Address,
+  site: "https://letscash.fun",
+  launch: "https://letscash.fun/launch",
+  docs: "https://letscashfun.com/docs",
+  feePercents: [1, 3, 5, 10] as const,
+} as const;
+
+/** @deprecated launch is letscash.fun — kept for the old escrow reader. */
 export const PONS = {
-  factory: "0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e" as Address,
-  memeHook: "0xE5e702641Ea86F4ae6cC3cDaeD2B886f976Be044" as Address,
+  factory: LETSCASH.factory,
+  memeHook: LETSCASH.hook,
   feeEscrow: "0xd3AFEB2a57f70eF218Aa82451c51B2fb0416Ac9e" as Address,
-  buybackVault: "0x42df2a798f82289E177311362e8f5ccC45c1219c" as Address,
-  launchLocker: "0x267444D099b10fB5Ed7c3Cc7B7c767AdcA574952" as Address,
-  launchRouter: "0xe33E9E479dF8802cb0866d5d05258bEc4cF62948" as Address,
-  launchDeployer: "0x3711ceA4feaDE896C913C68F01Eda97Cb06D1A42" as Address,
-  graduationExecutor: "0xC7819B64A1dAECD7eC19856d026cb14EfBd89046" as Address,
-  graduationGuard: "0xf5695117b99B6f6401e67d4195BD653628176C6C" as Address,
-  docs: "https://docs.ponsfamily.com/v2",
-  launch: "https://www.ponsfamily.com/launchpad/create",
+  docs: LETSCASH.docs,
+  launch: LETSCASH.launch,
 } as const;
 
 export const ZERO = "0x0000000000000000000000000000000000000000" as Address;
 
 /**
- * Paste deployed addresses after Remix deploy + PONS launch.
+ * Paste deployed addresses after Remix deploy + letscash.fun launch.
  * Prefer VITE_VAULT_CA / VITE_BOARD_CA / VITE_TOKEN_CA when set.
  */
 function envAddr(key: string): Address {
@@ -72,6 +76,7 @@ export const CATRIS = {
 /** Official Catris surfaces. Vault.setMetadata uses these strings. */
 export const LINKS = {
   site: "https://catris.xyz",
+  launchpad: "https://letscash.fun",
   github: "https://github.com/catrisXYZ",
   githubUser: "catrisXYZ",
   x: "https://x.com/catrisXYZ",

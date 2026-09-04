@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { PageWell } from "@/components/game/PageWell";
-import { CATRIS, LINKS, PONS } from "@/lib/chain";
+import { CATRIS, LETSCASH, LINKS } from "@/lib/chain";
 
 export const Route = createFileRoute("/docs")({ component: DocsPage });
 
@@ -16,14 +16,14 @@ function DocsPage() {
       <p className="mt-4 text-muted leading-relaxed">
         Catris is guideline-feel Tetris with overflowing cat sprites. Stack
         cats, clear lines, post the run. Every 15 minutes the highest score
-        takes 60% of the vault pot funded by a 3% PONS creator tax — paid to
-        a contract, never an EOA.
+        takes 60% of the vault pot funded by the 3% letscash.fun trade tax —
+        paid to a contract, never an EOA.
       </p>
 
       <dl className="mt-6 grid gap-2 text-sm sm:grid-cols-2">
         <Row k="Play" v="catris.xyz/play" href={`${LINKS.site}/play`} />
         <Row k="Arena" v="catris.xyz/arena" href={`${LINKS.site}/arena`} />
-        <Row k="GitHub" v={LINKS.github} href={LINKS.github} />
+        <Row k="Launchpad" v="letscash.fun" href={LETSCASH.launch} />
         <Row k="X / Telegram" v={`@${LINKS.xHandle}`} href={LINKS.x} />
       </dl>
 
@@ -117,22 +117,22 @@ function DocsPage() {
         <dl className="mt-3 grid gap-2 text-sm">
           <Row k="Chain" v="Robinhood Chain 4663" />
           <Row k="RPC" v="https://rpc.mainnet.chain.robinhood.com" />
-          <Row k="Launch" v="PONS v2 · creator tax 3% (300 bps)" />
-          <Row k="Factory" v={PONS.factory} />
-          <Row k="Escrow" v={PONS.feeEscrow} />
+          <Row k="Launch" v="letscash.fun · 3% trade tax" />
+          <Row k="Factory" v={LETSCASH.factory} />
+          <Row k="Hook" v={LETSCASH.hook} />
           <Row k="Ticker" v={CATRIS.symbol} />
         </dl>
       </Section>
 
       <Section title="Fee flow">
         <p>
-          Traders pay the 3% creator tax in ETH on the bonding curve and the
-          Uniswap v4 pool. PONS holds it in escrow. The vault is the only fee
-          recipient.
+          Traders pay the 3% tax in ETH on the Uniswap v4 pool that letscash.fun
+          opens at launch. No bonding curve. The creator stream is handed to
+          the vault.
         </p>
         <p className="font-mono text-xs leading-relaxed">
-          trade $CATRIS → 3% creator tax → PONS escrow → claimFromEscrow →
-          Vault 60 / 30 / 10 → epoch winner ETH, holder drip, team
+          trade $CATRIS → 3% letscash.fun tax → hook claim → Vault 60 / 30 / 10
+          → epoch winner ETH, holder drip, team
         </p>
       </Section>
 
@@ -140,12 +140,13 @@ function DocsPage() {
         <p>
           Two helpers, Solidity 0.8.24, Remix, 200 optimizer runs. Vault holds
           the pot and the split. Board holds epochs and signed scores. A
-          15-minute keeper claims escrow, posts the winner, and publishes the
-          drip merkle root.
+          15-minute keeper harvests the creator stream, posts the winner, and
+          publishes the drip merkle root.
         </p>
         <ol className="list-decimal space-y-2 pl-5">
           <li>
-            <code>CatrisVault(teamWallet)</code> — PONS creator fee recipient.{" "}
+            <code>CatrisVault(teamWallet)</code> — letscash.fun creator stream
+            recipient.{" "}
             <a
               className="underline decoration-border underline-offset-4"
               href="/contracts/CatrisVault.sol"
@@ -175,18 +176,19 @@ function DocsPage() {
             Board: <code>setBot(keeperEOA)</code>, <code>setVault(VAULT_CA)</code>.
           </li>
           <li>
-            Launch on the{" "}
+            Launch on{" "}
             <a
               className="underline decoration-border underline-offset-4"
-              href={PONS.launch}
+              href={LETSCASH.launch}
               target="_blank"
               rel="noreferrer"
             >
-              PONS create page
+              letscash.fun/launch
             </a>
-            : name Catris, symbol {CATRIS.symbol}, tax 3%, fee recipient{" "}
-            <code>VAULT_CA</code>, buyback off, pair ETH. Then{" "}
-            <code>setTokenCA(TOKEN_CA)</code> on the vault.
+            : name Catris, symbol {CATRIS.symbol}, fee 3%, pair ETH. Then hand
+            the creator stream to <code>VAULT_CA</code> with{" "}
+            <code>updateCreator</code> and call <code>setTokenCA(TOKEN_CA)</code>{" "}
+            on the vault.
           </li>
         </ol>
       </Section>

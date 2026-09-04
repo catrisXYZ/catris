@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { HeroWell } from "@/components/game/HeroWell";
-import { CATRIS, FEE_SPLIT, PONS } from "@/lib/chain";
+import { CATRIS, FEE_SPLIT, LETSCASH } from "@/lib/chain";
 import { ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/")({ component: Home });
@@ -12,7 +12,7 @@ function Home() {
       <section className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:py-20">
         <div>
           <p className="text-xs tracking-[0.22em] text-muted uppercase">
-            Robinhood Chain · PONS v2 · 3% creator tax
+            Robinhood Chain · letscash.fun · 3% trade tax
           </p>
           <h1 className="mt-4 font-display text-5xl leading-[1.05] tracking-tight italic sm:text-6xl lg:text-7xl">
             Cats fall.
@@ -23,8 +23,9 @@ function Home() {
           </h1>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
             Catris is the original js13k kitten tetris, rebuilt as a DApp. Launch
-            $CATRIS on PONS, route the 3% creator tax into a vault — never an EOA —
-            and pay a 15-minute epoch winner plus holder drip from the same pot.
+            $CATRIS on letscash.fun, hand the creator ETH stream to a vault —
+            never an EOA — and pay a 15-minute epoch winner plus holder drip
+            from the same pot.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button variant="accent" size="lg" asChild>
@@ -34,7 +35,9 @@ function Home() {
               </Link>
             </Button>
             <Button variant="outline" size="lg" asChild>
-              <Link to="/docs">Launch on PONS</Link>
+              <a href={LETSCASH.launch} target="_blank" rel="noreferrer">
+                Launch on letscash.fun
+              </a>
             </Button>
           </div>
         </div>
@@ -51,7 +54,7 @@ function Home() {
           <Feature
             kicker="02"
             title="Tax"
-            body="Set creatorTaxBps to 300 on PONS. Creator fee recipient is the Catris vault contract, not a private wallet."
+            body="Launch at 3% on letscash.fun. Point the creator stream at the Catris vault contract, not a private wallet."
           />
           <Feature
             kicker="03"
@@ -65,9 +68,9 @@ function Home() {
         <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
           <h2 className="font-display text-3xl italic tracking-tight">Fee anatomy</h2>
           <p className="mt-2 max-w-2xl text-muted">
-            Traders on the bonding curve (then the Uniswap v4 pool) pay the
-            optional creator tax in ETH. PONS escrows it. The vault claims and
-            splits every epoch.
+            Every trade on the Uniswap v4 pool pays the 3% tax in ETH — no
+            bonding curve, no migration. The creator share streams to the
+            vault. The vault splits every epoch.
           </p>
           <ol className="mt-8 grid gap-3 md:grid-cols-3">
             {FEE_SPLIT.map((s) => (
@@ -78,14 +81,14 @@ function Home() {
             ))}
           </ol>
           <p className="mt-6 text-sm text-muted">
-            Token {CATRIS.symbol} · tax {CATRIS.creatorTaxBps / 100}% · PONS factory{" "}
+            Token {CATRIS.symbol} · tax {CATRIS.creatorTaxBps / 100}% ·{" "}
             <a
               className="underline decoration-border underline-offset-4 hover:text-fg"
-              href={PONS.launch}
+              href={LETSCASH.launch}
               target="_blank"
               rel="noreferrer"
             >
-              launchpad
+              letscash.fun
             </a>
           </p>
         </div>
