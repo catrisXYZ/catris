@@ -6,8 +6,7 @@
  *   BOT_PRIVATE_KEY  keeper EOA (setBot on vault + board)
  *   VAULT_CA BOARD_CA TOKEN_CA
  *   PORT             3000
- *   MIN_CLAIM_ETH    0.005
- *   ALLOW_ORIGIN     https://your-site
+ *   ALLOW_ORIGIN     https://www.catris.xyz
  */
 import { createServer } from "node:http";
 import { MerkleTree } from "merkletreejs";
@@ -17,28 +16,27 @@ import {
   Wallet,
   ZeroAddress,
   ZeroHash,
-  formatEther,
   keccak256,
-  parseEther,
   solidityPacked,
   verifyMessage,
 } from "ethers";
 
 const RPC = process.env.RPC_URL || "https://rpc.mainnet.chain.robinhood.com";
 const EPOCH_DURATION = 15 * 60;
-const MIN_CLAIM_ETH = parseFloat(process.env.MIN_CLAIM_ETH ?? "0.005");
 const ORIGIN = process.env.ALLOW_ORIGIN || "*";
 
 const VAULT_ABI = [
   "function settleEpoch(uint256 epochId, bytes32 merkleRoot, address winner, uint256 winnerPrize) external",
-  "function claimFromEscrow() external",
-  "function pendingEscrow() external view returns (uint256)",
+  "function harvest() external",
+  "function pendingTab() external view returns (uint256)",
   "function buckets() external view returns (uint256 prize, uint256 drip, uint256 team)",
 ];
 const BOARD_ABI = [
   "function submitScore(address player, uint256 score, uint256 lines, bytes32 nonce) external returns (bool)",
   "function markSettled(uint256 epochId) external",
   "function getCurrentLeader() external view returns (address winner, uint256 score)",
+  "function getEpochWinner(uint256 epochId) external view returns (address winner, uint256 score, uint256 lines)",
+  "function epochs(uint256 epochId) external view returns (address winner, uint256 topScore, uint256 topLines, bool settled)",
   "function currentEpoch() external view returns (uint256)",
   "function epochEndsAt() external view returns (uint256)",
 ];
@@ -116,12 +114,21 @@ async function buildDripTree(dripPool) {
 }
 
 async function settle() {
-  const epochId = await board.currentEpoch();
-  const [winner, topScore] = await board.getCurrentLeader();
+  const current = await board.currentEpoch();
+  const epochId = current > 0n ? current - 1n : 0n;
+  const rec = await board.epochs(epochId);
+  const settled = rec.settled ?? rec[3];
+  const winner = rec.winner ?? rec[0];
+  const topScore = rec.topScore ?? rec[1];
+  if (settled) {
+    console.log(`[settle] epoch=${epochId} already settled`);
+    return;
+  }
   const { prize, drip } = await vault.buckets();
-  console.log(`[settle] epoch=${epochId} winner=${winner} score=${topScore} drip=${drip}`);
+  console.log(`[settle] epoch=${epochId} winner=${winner} score=${topScore} prize=${prize} drip=${drip}`);
   const { root, leaves } = await buildDripTree(drip);
-  const winnerPrize = winner !== ZeroAddress && prize > 0n ? (prize * 80n) / 100n : 0n;
+  const winnerPrize =
+    winner && winner !== ZeroAddress && prize > 0n ? (prize * 80n) / 100n : 0n;
   const tx = await vault.settleEpoch(epochId, root, winner, winnerPrize);
   await tx.wait();
   const tx2 = await board.markSettled(epochId);
@@ -130,12 +137,13 @@ async function settle() {
   console.log(`[settle] tx=${tx.hash} prize=${winnerPrize} root=${root}`);
 }
 
-async function maybeClaimEscrow() {
-  const pending = await vault.pendingEscrow();
-  if (pending >= parseEther(String(MIN_CLAIM_ETH))) {
-    const tx = await vault.claimFromEscrow();
+async function maybeHarvest() {
+  try {
+    const tx = await vault.harvest();
     await tx.wait();
-    console.log(`[escrow] claimed ${formatEther(pending)} ETH tx=${tx.hash}`);
+    console.log(`[harvest] tx=${tx.hash}`);
+  } catch (e) {
+    console.error("[harvest]", e instanceof Error ? e.message : e);
   }
 }
 
@@ -146,7 +154,7 @@ function scheduleNextEpoch() {
   console.log(`[timer] next epoch in ${Math.round(ms / 1000)}s`);
   setTimeout(async () => {
     try {
-      await maybeClaimEscrow();
+      await maybeHarvest();
       await settle();
     } catch (e) {
       console.error("[epoch]", e instanceof Error ? e.message : e);

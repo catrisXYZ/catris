@@ -1,16 +1,26 @@
-export const ponsEscrowAbi = [
-  {
-    type: "function",
-    name: "balanceOf",
-    stateMutability: "view",
-    inputs: [{ name: "recipient", type: "address" }],
-    outputs: [{ type: "uint256" }],
-  },
+export const letscashHookAbi = [
   {
     type: "function",
     name: "claim",
     stateMutability: "nonpayable",
-    inputs: [],
+    inputs: [{ name: "poolId", type: "bytes32" }],
+    outputs: [],
+  },
+  {
+    type: "function",
+    name: "tab",
+    stateMutability: "view",
+    inputs: [{ name: "poolId", type: "bytes32" }],
+    outputs: [{ type: "uint256" }],
+  },
+  {
+    type: "function",
+    name: "updateCreator",
+    stateMutability: "nonpayable",
+    inputs: [
+      { name: "poolId", type: "bytes32" },
+      { name: "newAddr", type: "address" },
+    ],
     outputs: [],
   },
 ] as const;
@@ -18,14 +28,14 @@ export const ponsEscrowAbi = [
 export const vaultAbi = [
   {
     type: "function",
-    name: "claimFromEscrow",
+    name: "harvest",
     stateMutability: "nonpayable",
     inputs: [],
     outputs: [],
   },
   {
     type: "function",
-    name: "pendingEscrow",
+    name: "pendingTab",
     stateMutability: "view",
     inputs: [],
     outputs: [{ type: "uint256" }],
@@ -84,6 +94,17 @@ export const boardAbi = [
     outputs: [
       { name: "winner", type: "address" },
       { name: "score", type: "uint256" },
+    ],
+  },
+  {
+    type: "function",
+    name: "getEpochWinner",
+    stateMutability: "view",
+    inputs: [{ name: "epochId", type: "uint256" }],
+    outputs: [
+      { name: "winner", type: "address" },
+      { name: "score", type: "uint256" },
+      { name: "lines", type: "uint256" },
     ],
   },
 ] as const;

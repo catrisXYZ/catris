@@ -9,29 +9,27 @@ import {
   explorerAddress,
   isDeployed,
 } from "@/lib/chain";
-import { readEscrowNative } from "@/lib/onchain";
+import { readPendingTab } from "@/lib/onchain";
 import { formatEth } from "@/lib/utils";
-import { useWallet } from "@/lib/wallet/store";
 
 export const Route = createFileRoute("/treasury")({ component: TreasuryPage });
 
 function TreasuryPage() {
-  const address = useWallet((s) => s.address);
+  const [escrow, setEscrow] = useState<bigint | null>(null);
   const [escrow, setEscrow] = useState<bigint | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
-    const target = isDeployed(CATRIS.vault) ? CATRIS.vault : address;
-    if (!target) return;
-    readEscrowNative({ data: { recipient: target } })
+    if (!isDeployed(CATRIS.vault)) return;
+    readPendingTab()
       .then((v) => {
         if (v === null) setEscrow(null);
         else setEscrow(BigInt(v));
       })
       .catch((e: unknown) =>
-        setErr(e instanceof Error ? e.message : "Could not read escrow."),
+        setErr(e instanceof Error ? e.message : "Could not read creator tab."),
       );
-  }, [address]);
+  }, []);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
@@ -52,15 +50,15 @@ function TreasuryPage() {
         <Panel
           label="Creator tax"
           value={`${CATRIS.creatorTaxBps / 100}%`}
-          hint="3% fee config on letscash.fun, fixed at launch"
+          hint="1% trade tax · 0.7% creator stream to the vault"
         />
         <Panel
           label="Creator stream (ETH)"
           value={escrow === null ? "—" : formatEth(escrow)}
           hint={
             isDeployed(CATRIS.vault)
-              ? "Pending creator ETH for the vault"
-              : "Connect a wallet to peek the stream for that address"
+              ? "Unclaimed creator ETH sitting on the letscash hook"
+              : "Set VITE_VAULT_CA after Remix to read the tab"
           }
         />
         <Panel

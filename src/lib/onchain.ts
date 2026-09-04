@@ -1,26 +1,40 @@
 import { createServerFn } from "@tanstack/react-start";
-import { createPublicClient, http, type Address } from "viem";
-import { z } from "zod";
-import { ponsEscrowAbi } from "@/lib/abis";
-import { PONS, robinhoodChain } from "@/lib/chain";
+import { createPublicClient, http } from "viem";
+import { vaultAbi } from "@/lib/abis";
+import { CATRIS, robinhoodChain, isDeployed } from "@/lib/chain";
 
-export const readEscrowNative = createServerFn({ method: "GET" })
-  .validator(z.object({ recipient: z.string() }))
-  .handler(async ({ data }) => {
-    if (!/^0x[a-fA-F0-9]{40}$/.test(data.recipient)) return null as string | null;
-    const client = createPublicClient({
-      chain: robinhoodChain,
-      transport: http(robinhoodChain.rpcUrls.default.http[0]),
-    });
-    try {
-      const value = await client.readContract({
-        address: PONS.feeEscrow,
-        abi: ponsEscrowAbi,
-        functionName: "balanceOf",
-        args: [data.recipient as Address],
-      });
-      return value.toString();
-    } catch {
-      return null;
-    }
+export const readVaultBuckets = createServerFn({ method: "GET" }).handler(async () => {
+  if (!isDeployed(CATRIS.vault)) return null as { prize: string; drip: string; team: string } | null;
+  const client = createPublicClient({
+    chain: robinhoodChain,
+    transport: http(robinhoodChain.rpcUrls.default.http[0]),
   });
+  try {
+    const [prize, drip, team] = await client.readContract({
+      address: CATRIS.vault,
+      abi: vaultAbi,
+      functionName: "buckets",
+    });
+    return { prize: prize.toString(), drip: drip.toString(), team: team.toString() };
+  } catch {
+    return null;
+  }
+});
+
+export const readPendingTab = createServerFn({ method: "GET" }).handler(async () => {
+  if (!isDeployed(CATRIS.vault)) return null as string | null;
+  const client = createPublicClient({
+    chain: robinhoodChain,
+    transport: http(robinhoodChain.rpcUrls.default.http[0]),
+  });
+  try {
+    const value = await client.readContract({
+      address: CATRIS.vault,
+      abi: vaultAbi,
+      functionName: "pendingTab",
+    });
+    return value.toString();
+  } catch {
+    return null;
+  }
+});

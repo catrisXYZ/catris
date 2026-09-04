@@ -16,8 +16,8 @@ function DocsPage() {
       <p className="mt-4 text-muted leading-relaxed">
         Catris is guideline-feel Tetris with overflowing cat sprites. Stack
         cats, clear lines, post the run. Every 15 minutes the highest score
-        takes 60% of the vault pot funded by the 3% letscash.fun trade tax —
-        paid to a contract, never an EOA.
+        takes 60% of the vault pot funded by the letscash.fun creator stream
+        (0.7% of the 1% trade tax) — paid to a contract, never an EOA.
       </p>
 
       <dl className="mt-6 grid gap-2 text-sm sm:grid-cols-2">
@@ -118,7 +118,7 @@ function DocsPage() {
         <dl className="mt-3 grid gap-2 text-sm">
           <Row k="Chain" v="Robinhood Chain 4663" />
           <Row k="RPC" v="https://rpc.mainnet.chain.robinhood.com" />
-          <Row k="Launch" v="letscash.fun · 3% trade tax" />
+          <Row k="Launch" v="letscash.fun · 1% trade tax (0.7% creator)" />
           <Row k="Factory" v={LETSCASH.factory} />
           <Row k="Hook" v={LETSCASH.hook} />
           <Row k="Ticker" v={CATRIS.symbol} />
@@ -127,12 +127,12 @@ function DocsPage() {
 
       <Section title="Fee flow">
         <p>
-          Traders pay the 3% tax in ETH on the Uniswap v4 pool that letscash.fun
-          opens at launch. No bonding curve. The creator stream is handed to
-          the vault.
+          Traders pay a 1% tax in ETH on the Uniswap v4 pool that letscash.fun
+          opens at launch (0.7% creator / 0.3% platform). No bonding curve. The
+          creator stream is handed to the vault.
         </p>
         <p className="font-mono text-xs leading-relaxed">
-          trade $CATRIS → 3% letscash.fun tax → hook claim → Vault 60 / 30 / 10
+          trade $CATRIS → 1% tax → 0.7% hook.claim → Vault 60 / 30 / 10
           → epoch winner ETH, holder drip, team
         </p>
       </Section>
@@ -171,7 +171,7 @@ function DocsPage() {
             <code className="break-all">
               setMetadata("{LINKS.site}", "{LINKS.xHandle}", "{LINKS.github}", "{LINKS.telegram}")
             </code>
-            .
+            . After launch <code>setPoolId(poolId)</code>.
           </li>
           <li>
             Board: <code>setBot(keeperEOA)</code>, <code>setVault(VAULT_CA)</code>.
@@ -186,10 +186,11 @@ function DocsPage() {
             >
               letscash.fun/launch
             </a>
-            : name Catris, symbol {CATRIS.symbol}, fee 3%, pair ETH. Then hand
+            : name Catris, symbol {CATRIS.symbol}, fee 1%, pair ETH. Then hand
             the creator stream to <code>VAULT_CA</code> with{" "}
-            <code>updateCreator</code> and call <code>setTokenCA(TOKEN_CA)</code>{" "}
-            on the vault.
+            <code>updateCreator(poolId, VAULT_CA)</code>, call{" "}
+            <code>setPoolId</code> and <code>setTokenCA(TOKEN_CA)</code> on the
+            vault.
           </li>
         </ol>
       </Section>
@@ -224,10 +225,11 @@ function DocsPage() {
         </p>
         <ul className="mt-3 list-disc space-y-2 pl-5">
           <li>
-            Empty escrow no longer reverts — the keeper can poke{" "}
-            <code>claimFromEscrow</code> every epoch.
+            Empty hook tab no longer reverts — the keeper pokes{" "}
+            <code>harvest()</code> every epoch, which calls{" "}
+            <code>hook.claim(poolId)</code> as the vault.
           </li>
-          <li>Reentrancy lock on prize, drip, team, and escrow pulls.</li>
+          <li>Reentrancy lock on prize, drip, team, and harvest. Winner payout capped at 80% of the prize bucket.</li>
           <li>
             Score signatures are <code>personal_sign</code>, the message wallets
             actually produce.

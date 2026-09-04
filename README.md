@@ -1,7 +1,7 @@
 # Catris ($CATRIS)
 
 Original-sprite cat tetris on **Robinhood Chain (4663)**. Launch on
-[letscash.fun](https://letscash.fun/launch) at **3%** trade tax. The creator
+[letscash.fun](https://letscash.fun/launch) at **1%** trade tax (0.7% creator stream). The creator
 ETH stream feeds a vault — never an EOA — split **60 / 30 / 10** across a
 15-minute epoch prize, holder drip, and team.
 

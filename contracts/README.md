@@ -14,12 +14,12 @@ Canonical pair:
 ## Fee path
 
 ```
-letscash.fun launch  (3% trade tax, Uniswap v4 pool, LP locked)
+letscash.fun launch  (1% trade tax, 0.7% creator stream, Uniswap v4, LP locked)
         │
         │  updateCreator(poolId, CatrisVault)   ← never an EOA
         ▼
 letscash.fun hook     0x75A54357D9C78a2Db19004a5FDc76c50F9242AEC
-        │  hook.claim(poolId)  (creator / keeper)
+        │  vault.harvest() → hook.claim(poolId)  (creator = vault)
         ▼
 CatrisVault       split 60 / 30 / 10
         ├── 60%  prizeWei     epoch winner (up to 80% of the bucket)
@@ -41,9 +41,9 @@ Hardening vs the first draft:
 3. Vault: `setBot(keeperEOA)`, `setMetadata("https://catris.xyz", "catrisXYZ", "https://github.com/catrisXYZ", "https://t.me/CatrisRH")`
 4. Board: `setBot(keeperEOA)`, `setVault(VAULT_CA)`
 5. Launch **CATRIS** on [letscash.fun](https://letscash.fun/launch)
-   - Name `Catris`, symbol `CATRIS`, fee **3%**, pair ETH
-   - After launch: `updateCreator` so the stream pays **VAULT_CA**
-6. Vault: `setTokenCA(TOKEN_CA)`
+   - Name `Catris`, symbol `CATRIS`, fee **1%**, pair ETH
+   - After launch: `updateCreator(poolId, VAULT_CA)` so the stream pays the vault
+6. Vault: `setPoolId(poolId)`, `setTokenCA(TOKEN_CA)`
 7. Site env: `VITE_VAULT_CA`, `VITE_BOARD_CA`, `VITE_TOKEN_CA`, `VITE_KEEPER_URL`
 
 RPC: `https://rpc.mainnet.chain.robinhood.com`  

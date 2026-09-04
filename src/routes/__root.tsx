@@ -16,7 +16,7 @@ export const Route = createRootRoute({
       {
         name: "description",
         content:
-          "Original-sprite cat tetris on Robinhood Chain. Launch on letscash.fun. A 3% trade tax feeds 15-minute epoch prizes and holder drip.",
+          "Original-sprite cat tetris on Robinhood Chain. Launch on letscash.fun. A 1% trade tax (0.7% creator stream) feeds 15-minute epoch prizes and holder drip.",
       },
     ],
     links: [

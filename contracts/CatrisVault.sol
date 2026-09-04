@@ -2,22 +2,22 @@
 pragma solidity ^0.8.24;
 
 /// @title CatrisVault
-/// @notice Receives the letscash.fun 3% creator stream and splits:
-///         60% epoch prize, 30% holder drip (merkle), 10% team.
-///         Point updateCreator at this address after launch.
-interface IFeeEscrow {
-    function balanceOf(address recipient) external view returns (uint256);
-    function claim() external;
+/// @notice Receives the letscash.fun creator stream (0.7% of the 1% trade tax)
+///         and splits 60% epoch prize, 30% holder drip (merkle), 10% team.
+///         After launch, hook.updateCreator(poolId, this). Keeper calls harvest().
+interface ILetsCashHook {
+    function claim(bytes32 poolId) external;
+    function tab(bytes32 poolId) external view returns (uint256);
 }
 
 contract CatrisVault {
-    IFeeEscrow public constant FEE_ESCROW =
-        IFeeEscrow(0xd3AFEB2a57f70eF218Aa82451c51B2fb0416Ac9e);
+    ILetsCashHook public constant HOOK =
+        ILetsCashHook(0x75A54357D9C78a2Db19004a5FDc76c50F9242AEC);
 
     uint256 public constant PRIZE_BPS = 6000;
     uint256 public constant DRIP_BPS = 3000;
     uint256 public constant TEAM_BPS = 1000;
-    uint256 public constant EPOCH = 15 minutes;
+    uint256 public constant MAX_PAYOUT_BPS = 8000;
 
     uint256 public prizeWei;
     uint256 public dripWei;
@@ -30,6 +30,7 @@ contract CatrisVault {
     address public pendingOwner;
     address public bot;
     address public teamWallet;
+    bytes32 public poolId;
     string public SITE;
     string public X_HANDLE;
     string public GITHUB;
@@ -39,12 +40,13 @@ contract CatrisVault {
     bool private locked;
 
     event EthSplit(uint256 amount, uint256 prize, uint256 drip, uint256 team);
-    event EscrowClaimed(uint256 amount);
+    event Harvested(bytes32 indexed poolId);
     event EpochSettled(uint256 indexed epochId, address winner, uint256 prize, bytes32 merkleRoot);
     event DripClaimed(address indexed player, uint256 amount);
     event TeamWithdrawn(address to, uint256 amount);
     event BotSet(address bot);
     event TeamWalletSet(address wallet);
+    event PoolIdSet(bytes32 poolId);
 
     error Unauthorized();
     error Reentrant();
@@ -76,15 +78,15 @@ contract CatrisVault {
         teamWallet = _teamWallet;
     }
 
-    /// @notice Pull native creator fees. No-op (no revert) if escrow is empty
-    ///         so a keeper can poke this every epoch without failing.
-    function claimFromEscrow() external nonReentrant {
-        uint256 beforeBal = address(this).balance;
-        FEE_ESCROW.claim();
-        uint256 received = address(this).balance - beforeBal;
-        if (received == 0) return;
-        _split(received);
-        emit EscrowClaimed(received);
+    /// @notice Pull creator ETH from the letscash hook. claim() is creator-only,
+    ///         so this vault must already be the stream owner. ETH arrives via
+    ///         receive() and is split there — do not split again here.
+    ///         Empty tab is a no-op (try/catch) so the keeper can poke every epoch.
+    function harvest() external onlyBot nonReentrant {
+        if (poolId == bytes32(0)) return;
+        try HOOK.claim(poolId) {
+            emit Harvested(poolId);
+        } catch {}
     }
 
     receive() external payable {
@@ -116,7 +118,8 @@ contract CatrisVault {
     ) external onlyBot nonReentrant {
         if (merkleRoot != bytes32(0)) currentMerkleRoot = merkleRoot;
         if (winner != address(0) && winnerPrize > 0) {
-            if (winnerPrize > prizeWei) revert PrizeTooHigh();
+            uint256 cap = (prizeWei * MAX_PAYOUT_BPS) / 10_000;
+            if (winnerPrize > cap || winnerPrize > prizeWei) revert PrizeTooHigh();
             prizeWei -= winnerPrize;
             (bool ok, ) = payable(winner).call{value: winnerPrize}("");
             if (!ok) revert TransferFailed();
@@ -157,6 +160,11 @@ contract CatrisVault {
         emit TeamWalletSet(_wallet);
     }
 
+    function setPoolId(bytes32 id) external onlyOwner {
+        poolId = id;
+        emit PoolIdSet(id);
+    }
+
     function setTokenCA(string calldata ca) external onlyOwner {
         TOKEN_CA = ca;
     }
@@ -183,8 +191,13 @@ contract CatrisVault {
         pendingOwner = address(0);
     }
 
-    function pendingEscrow() external view returns (uint256) {
-        return FEE_ESCROW.balanceOf(address(this));
+    function pendingTab() external view returns (uint256) {
+        if (poolId == bytes32(0)) return 0;
+        try HOOK.tab(poolId) returns (uint256 amount) {
+            return amount;
+        } catch {
+            return 0;
+        }
     }
 
     function buckets() external view returns (uint256 prize, uint256 drip, uint256 team) {

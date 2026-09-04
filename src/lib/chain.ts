@@ -40,7 +40,7 @@ export const LETSCASH = {
   site: "https://letscash.fun",
   launch: "https://letscash.fun/launch",
   docs: "https://letscashfun.com/docs",
-  feePercents: [1, 3, 5, 10] as const,
+  feePercents: [1] as const,
 } as const;
 
 /** @deprecated launch is letscash.fun — kept for the old escrow reader. */
@@ -67,7 +67,7 @@ function envAddr(key: string): Address {
 export const CATRIS = {
   name: "Catris",
   symbol: "CATRIS",
-  creatorTaxBps: 300,
+  creatorTaxBps: 100,
   token: envAddr("VITE_TOKEN_CA"),
   vault: envAddr("VITE_VAULT_CA"),
   board: envAddr("VITE_BOARD_CA"),
