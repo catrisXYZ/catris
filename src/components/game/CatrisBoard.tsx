@@ -55,7 +55,7 @@ function KeyCap({ children }: { children: string }) {
 
 export function CatrisBoard() {
   const hostRef = useRef<HTMLCanvasElement>(null);
-  const stageRef = useRef<HTMLDivElement>(null);
+  const wellSlotRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
   const holdRef = useRef<HTMLCanvasElement>(null);
   const nextRefs = useRef<Array<HTMLCanvasElement | null>>([]);
@@ -135,15 +135,13 @@ export function CatrisBoard() {
   useEffect(() => {
     const canvas = hostRef.current;
     const frame = frameRef.current;
-    const stage = stageRef.current;
-    if (!canvas || !frame || !stage) return;
+    const slot = wellSlotRef.current;
+    if (!canvas || !frame || !slot) return;
     const fit = () => {
       const dpr = Math.min(2, window.devicePixelRatio || 1);
-      const mobile = window.matchMedia("(max-width: 1023px)").matches;
-      const padH = mobile ? 64 : 8;
-      const maxW = Math.min(stage.clientWidth || 360, 360);
-      const maxH = Math.max(260, (stage.clientHeight || 480) - padH);
-      const cell = Math.max(12, Math.floor(Math.min(maxW / COLS, maxH / ROWS)));
+      const maxW = Math.max(120, Math.min(slot.clientWidth || 360, 360));
+      const maxH = Math.max(220, slot.clientHeight || 480);
+      const cell = Math.max(10, Math.floor(Math.min(maxW / COLS, maxH / ROWS)));
       const cssW = cell * COLS;
       const cssH = cell * ROWS;
       frame.style.width = `${cssW}px`;
@@ -161,7 +159,7 @@ export function CatrisBoard() {
     };
     fit();
     const ro = new ResizeObserver(fit);
-    ro.observe(stage);
+    ro.observe(slot);
     window.addEventListener("resize", fit);
     return () => {
       ro.disconnect();
@@ -286,7 +284,7 @@ export function CatrisBoard() {
   const pad = (action: string, label: string) => (
     <button
       type="button"
-      className="flex h-12 flex-1 items-center justify-center rounded-md border border-border bg-elevated text-sm text-fg active:bg-accent active:text-accent-fg"
+      className="flex h-14 min-w-0 flex-1 items-center justify-center rounded-md border border-border bg-elevated text-xs font-medium text-fg active:bg-accent active:text-accent-fg"
       onPointerDown={(e) => {
         e.preventDefault();
         unlockAudio();
@@ -316,87 +314,125 @@ export function CatrisBoard() {
   const overlayOpen = !snap?.started || snap.paused || snap.over;
 
   return (
-    <div
-      ref={stageRef}
-      className="grid h-full min-h-0 gap-3 lg:grid-cols-[minmax(0,1fr)_200px] lg:items-stretch"
-    >
+    <div className="flex h-full min-h-0 flex-col gap-2 lg:grid lg:grid-cols-[minmax(0,1fr)_200px] lg:gap-3">
       <div
-        ref={frameRef}
-        className="relative mx-auto touch-none overflow-hidden rounded-lg border border-border bg-surface"
+        ref={wellSlotRef}
+        className="flex min-h-0 flex-1 items-center justify-center"
       >
-        <canvas
-          ref={hostRef}
-          className="block"
-          style={{ touchAction: "none" }}
-        />
-        {snap?.overlay && snap.started && !snap.over && (
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <p className="font-display text-3xl italic tracking-tight text-fg drop-shadow-[0_2px_0_#140e0c]">
-              {snap.overlay}
-            </p>
-          </div>
-        )}
-        {overlayOpen && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 rounded-lg bg-bg/80 px-6 text-center">
-            {!snap?.started && (
-              <>
-                <div
-                  className="h-28 w-28"
-                  aria-hidden
-                  dangerouslySetInnerHTML={{ __html: LOGO_SVG }}
-                />
-                <p className="max-w-xs text-sm text-muted">
-                  Stack cats. Clear lines. Watch for black cats that refuse to move, spin, or wait.
-                </p>
-                <Button variant="accent" size="lg" onClick={start}>
-                  Start run
-                </Button>
-              </>
-            )}
-            {snap?.paused && (
-              <>
-                <p className="font-display text-3xl italic">Paused</p>
-                <Button onClick={() => engineRef.current?.togglePause()}>Resume</Button>
-              </>
-            )}
-            {snap?.over && (
-              <>
-                <p className="font-display text-3xl italic">Litter full</p>
-                <p className="tabular text-2xl">{formatScore(snap.score)}</p>
-                <p className="text-sm text-muted">
-                  {snap.lines} lines · {snap.specials} black cats · best {formatScore(Math.max(best, snap.score))}
-                </p>
-                <label className="flex w-full max-w-xs flex-col gap-1 text-left text-xs text-muted">
-                  Handle
-                  <input
-                    value={handle}
-                    onChange={(e) => setHandle(e.target.value.slice(0, 20))}
-                    className="h-11 rounded-md border border-border bg-elevated px-3 text-sm text-fg"
+        <div
+          ref={frameRef}
+          className="relative touch-none overflow-hidden rounded-lg border border-border bg-surface"
+        >
+          <canvas ref={hostRef} className="block" style={{ touchAction: "none" }} />
+          {snap?.overlay && snap.started && !snap.over && (
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+              <p className="font-display text-3xl italic tracking-tight text-fg drop-shadow-[0_2px_0_#140e0c]">
+                {snap.overlay}
+              </p>
+            </div>
+          )}
+          {overlayOpen && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded-lg bg-bg/80 px-5 text-center">
+              {!snap?.started && (
+                <>
+                  <div
+                    className="h-16 w-16 sm:h-28 sm:w-28"
+                    aria-hidden
+                    dangerouslySetInnerHTML={{ __html: LOGO_SVG }}
                   />
-                </label>
-                <div className="flex flex-wrap justify-center gap-2">
-                  <Button variant="accent" onClick={start}>
-                    Play again
+                  <p className="max-w-xs text-xs text-muted sm:text-sm">
+                    Stack cats. Clear lines. Watch for black cats that refuse to move, spin, or wait.
+                  </p>
+                  <Button variant="accent" size="lg" onClick={start}>
+                    Start run
                   </Button>
-                  <Button variant="outline" onClick={() => void postRun()} disabled={posted || posting}>
-                    {posted ? "Posted" : posting ? "Posting" : "Post to arena"}
-                  </Button>
-                </div>
-                {postError && <p className="text-sm text-danger">{postError}</p>}
-                {chainNote && <p className="text-xs text-muted">{chainNote}</p>}
-              </>
-            )}
-          </div>
-        )}
+                </>
+              )}
+              {snap?.paused && (
+                <>
+                  <p className="font-display text-3xl italic">Paused</p>
+                  <Button onClick={() => engineRef.current?.togglePause()}>Resume</Button>
+                </>
+              )}
+              {snap?.over && (
+                <>
+                  <p className="font-display text-3xl italic">Litter full</p>
+                  <p className="tabular text-2xl">{formatScore(snap.score)}</p>
+                  <p className="text-sm text-muted">
+                    {snap.lines} lines · {snap.specials} black cats · best {formatScore(Math.max(best, snap.score))}
+                  </p>
+                  <label className="flex w-full max-w-xs flex-col gap-1 text-left text-xs text-muted">
+                    Handle
+                    <input
+                      value={handle}
+                      onChange={(e) => setHandle(e.target.value.slice(0, 20))}
+                      className="h-11 rounded-md border border-border bg-elevated px-3 text-sm text-fg"
+                    />
+                  </label>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    <Button variant="accent" onClick={start}>
+                      Play again
+                    </Button>
+                    <Button variant="outline" onClick={() => void postRun()} disabled={posted || posting}>
+                      {posted ? "Posted" : posting ? "Posting" : "Post to arena"}
+                    </Button>
+                  </div>
+                  {postError && <p className="text-sm text-danger">{postError}</p>}
+                  {chainNote && <p className="text-xs text-muted">{chainNote}</p>}
+                </>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
-      <aside className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-1">
+      <div className="sticky bottom-0 z-20 shrink-0 border-t border-border bg-bg pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] lg:hidden">
+        <div className="mb-2 flex items-center gap-3">
+          <HudStat label="Score" value={formatScore(snap?.score ?? 0)} />
+          <HudStat label="Best" value={formatScore(Math.max(best, snap?.score ?? 0))} />
+          <HudStat label="Lines" value={String(snap?.lines ?? 0)} />
+          <HudStat label="Lv" value={String(snap?.level ?? 1)} />
+          <div className="ml-auto flex items-center gap-1">
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-9 px-2"
+              onClick={() => engineRef.current?.togglePause()}
+              disabled={!snap?.started || snap.over}
+            >
+              {snap?.paused ? <Play className="size-4" /> : <Pause className="size-4" />}
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="h-9 px-2"
+              onClick={() => {
+                const next = !isMuted();
+                setMuted(next);
+                setMutedState(next);
+              }}
+            >
+              {muted ? <VolumeX className="size-4" /> : <Volume2 className="size-4" />}
+            </Button>
+          </div>
+        </div>
+        <div className="flex gap-1.5">
+          {pad("left", "←")}
+          {pad("right", "→")}
+          {pad("rotate", "Spin")}
+          {pad("soft", "↓")}
+          {pad("hard", "Drop")}
+          {pad("hold", "Hold")}
+        </div>
+      </div>
+
+      <aside className="hidden lg:grid lg:content-start lg:gap-3">
         <Stat label="Score" value={formatScore(snap?.score ?? 0)} />
         <Stat label="Best" value={formatScore(Math.max(best, snap?.score ?? 0))} />
         <Stat label="Lines" value={String(snap?.lines ?? 0)} />
         <Stat label="Level" value={String(snap?.level ?? 1)} />
 
-        <div className="col-span-2 rounded-lg border border-border bg-surface p-3 sm:col-span-4 lg:col-span-1">
+        <div className="rounded-lg border border-border bg-surface p-3">
           <p className="mb-2 text-xs tracking-widest text-muted uppercase">Hold / Next</p>
           <div className="flex items-center justify-between gap-2">
             <canvas ref={holdRef} className="size-16 rounded-sm bg-elevated" width={64} height={64} />
@@ -416,7 +452,7 @@ export function CatrisBoard() {
           </div>
         </div>
 
-        <div className="col-span-2 flex flex-wrap items-center gap-2 sm:col-span-4 lg:col-span-1">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             size="sm"
             variant="outline"
@@ -439,7 +475,7 @@ export function CatrisBoard() {
           </Button>
         </div>
 
-        <div className="col-span-2 hidden space-y-2 text-xs text-muted lg:col-span-1 lg:block">
+        <div className="space-y-2 text-xs text-muted">
           <p className="flex flex-wrap gap-1">
             <KeyCap>←</KeyCap>
             <KeyCap>→</KeyCap> move
@@ -458,15 +494,15 @@ export function CatrisBoard() {
           </p>
         </div>
       </aside>
+    </div>
+  );
+}
 
-      <div className="flex gap-2 lg:hidden">
-        {pad("left", "Left")}
-        {pad("right", "Right")}
-        {pad("rotate", "Spin")}
-        {pad("soft", "Down")}
-        {pad("hard", "Drop")}
-        {pad("hold", "Hold")}
-      </div>
+function HudStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="shrink-0">
+      <p className="text-[9px] tracking-widest text-muted uppercase">{label}</p>
+      <p className="font-display text-base tabular leading-none">{value}</p>
     </div>
   );
 }
@@ -479,5 +515,3 @@ function Stat({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
-
-
