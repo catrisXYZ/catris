@@ -1,0 +1,13 @@
+{
+  "name": "catris-keeper",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "epoch-bot.mjs",
+  "scripts": {
+    "start": "node epoch-bot.mjs"
+  },
+  "dependencies": {
+    "ethers": "^6.13.0",
+    "merkletreejs": "^0.3.11"
+  }
+}
