@@ -12,3 +12,4 @@ artifacts/
 node_modules/.nitro/
 .project_id
 .node_modules.lock
+CATRIS-HANDOFF.md

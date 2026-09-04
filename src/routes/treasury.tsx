@@ -16,7 +16,6 @@ export const Route = createFileRoute("/treasury")({ component: TreasuryPage });
 
 function TreasuryPage() {
   const [escrow, setEscrow] = useState<bigint | null>(null);
-  const [escrow, setEscrow] = useState<bigint | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
