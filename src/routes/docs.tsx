@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageWell } from "@/components/game/PageWell";
 import { CATRIS, LETSCASH, LINKS } from "@/lib/chain";
+import { HOUSE } from "@/lib/house";
 
 export const Route = createFileRoute("/docs")({ component: DocsPage });
 
@@ -11,19 +12,19 @@ function DocsPage() {
       <PageWell variant="docs" />
       <p className="mt-8 text-xs tracking-[0.2em] text-muted uppercase">Manual</p>
       <h1 className="mt-2 font-display text-4xl italic tracking-tight">
-        Rules, mechanics, stack
+        How the cats behave
       </h1>
       <p className="mt-4 text-muted leading-relaxed">
         Catris is guideline-feel Tetris with overflowing cat sprites. Stack
-        cats, clear lines, post the run. Every 15 minutes the highest score
-        takes 60% of the vault pot funded by the letscash.fun creator stream
-        (0.7% of the 1% trade tax) — paid to a contract, never an EOA.
+        cats, clear lines, post the run. Every fifteen minutes the highest
+        score takes Pounce. Cream drips to holders. Treats land in a bowl
+        contract — never an EOA.
       </p>
 
       <dl className="mt-6 grid gap-2 text-sm sm:grid-cols-2">
         <Row k="Play" v="catris.xyz/play" href={`${LINKS.site}/play`} />
-        <Row k="Arena" v="catris.xyz/arena" href={`${LINKS.site}/arena`} />
-        <Row k="Launchpad" v="letscash.fun" href={LETSCASH.launch} />
+        <Row k="Well" v="catris.xyz/arena" href={`${LINKS.site}/arena`} />
+        <Row k="House" v="catris.xyz/house" href={`${LINKS.site}/house`} />
         <Row k="X" v={`@${LINKS.xHandle}`} href={LINKS.x} />
         <Row k="TG community" v={`@${LINKS.telegramHandle}`} href={LINKS.telegram} />
       </dl>
@@ -62,7 +63,9 @@ function DocsPage() {
       <Section title="Scoring">
         <p>
           Line clears scale with level. Combos add on top. A small clock bonus
-          ticks while the run is alive.
+          ticks while the run is alive. Overlay <span className="text-fg">LITTER CLEAR</span> on
+          a quad, <span className="text-fg">TRIPLE</span> on three. Game over:{" "}
+          <span className="text-fg">Litter full</span>.
         </p>
         <dl className="mt-3 grid gap-2 text-sm">
           <Row k="Single" v="100 × level" />
@@ -91,20 +94,29 @@ function DocsPage() {
         </p>
       </Section>
 
-      <Section title="Epochs and the arena">
+      <Section title="The house">
         <p>
-          A run ends when a cat locks above the well. Post it with a handle.
-          The shared board stores every score. If a wallet is connected the
-          same run is signed with <code>personal_sign</code> (EIP-191) and
-          sent to the keeper for the on-chain board.
+          Five named rooms. Two contracts on opening night.{" "}
+          <Link to="/house" search={{ room: "bowl" }} className="text-fg underline decoration-border underline-offset-4">
+            Tour them
+          </Link>
+          .
         </p>
         <dl className="mt-3 grid gap-2 text-sm">
-          <Row k="Epoch" v="15 minutes (900 s)" />
-          <Row k="Winner" v="highest posted score in the window" />
-          <Row k="Prize" v="60% of that epoch’s vault harvest, in ETH" />
-          <Row k="Drip" v="30% merkle-claimed by $CATRIS holders" />
-          <Row k="Team" v="10% to the team wallet set at deploy" />
+          {HOUSE.map((r) => (
+            <Row
+              key={r.id}
+              k={r.name}
+              v={r.deploy === "launch" ? r.contract : `${r.kicker} · inside the Bowl`}
+            />
+          ))}
         </dl>
+        <p className="mt-3">
+          Epochs last 15 minutes. The keeper harvests the Bowl, pays Pounce
+          (previous window), and posts the Cream merkle root. Players pay no
+          gas. CatrisTreasury / Arena / Rewards are weekly PONS drafts — do not
+          deploy.
+        </p>
       </Section>
 
       <Section title="Stack">
@@ -112,69 +124,44 @@ function DocsPage() {
           Client is TanStack Start + React 19 + Tailwind. The well is a canvas
           painter: original cat SVGs preloaded as blob URLs, drawn with the
           js13k overflow math so ears and tails spill the cell. Scores live in
-          Postgres (Neon in prod, PGLite locally). Chain reads go through viem
-          on Robinhood Chain.
+          Postgres. Chain reads go through viem on Robinhood Chain.
         </p>
         <dl className="mt-3 grid gap-2 text-sm">
           <Row k="Chain" v="Robinhood Chain 4663" />
           <Row k="RPC" v="https://rpc.mainnet.chain.robinhood.com" />
-          <Row k="Launch" v="letscash.fun · 1% trade tax (0.7% creator)" />
+          <Row k="Door" v="letscash.fun" href={LETSCASH.launch} />
           <Row k="Factory" v={LETSCASH.factory} />
           <Row k="Hook" v={LETSCASH.hook} />
           <Row k="Ticker" v={CATRIS.symbol} />
         </dl>
       </Section>
 
-      <Section title="Fee flow">
+      <Section title="Opening night">
         <p>
-          Traders pay a 1% tax in ETH on the Uniswap v4 pool that letscash.fun
-          opens at launch (0.7% creator / 0.3% platform). No bonding curve. The
-          creator stream is handed to the vault.
-        </p>
-        <p className="font-mono text-xs leading-relaxed">
-          trade $CATRIS → 1% tax → 0.7% hook.claim → Vault 60 / 30 / 10
-          → epoch winner ETH, holder drip, team
-        </p>
-      </Section>
-
-      <Section title="Contracts">
-        <p>
-          Two helpers, Solidity 0.8.24, Remix, 200 optimizer runs. Vault holds
-          the pot and the split. Board holds epochs and signed scores. A
-          15-minute keeper harvests the creator stream, posts the winner, and
-          publishes the drip merkle root.
+          Compiler 0.8.24, 200 runs, network 4663. Three keys: deployer, Whiskers
+          wallet, keeper. Do not mix them. Stream goes to the Bowl, never an EOA.
         </p>
         <ol className="list-decimal space-y-2 pl-5">
           <li>
-            <code>CatrisVault(teamWallet)</code> — letscash.fun creator stream
-            recipient.{" "}
-            <a
-              className="underline decoration-border underline-offset-4"
-              href="/contracts/CatrisVault.sol"
-              download
-            >
+            <code>CatrisVault(whiskersWallet)</code>{" "}
+            <a className="underline decoration-border underline-offset-4" href="/contracts/CatrisVault.sol" download>
               Download
             </a>
           </li>
           <li>
-            <code>CatrisBoard</code> — no constructor args.{" "}
-            <a
-              className="underline decoration-border underline-offset-4"
-              href="/contracts/CatrisBoard.sol"
-              download
-            >
+            <code>CatrisBoard()</code>{" "}
+            <a className="underline decoration-border underline-offset-4" href="/contracts/CatrisBoard.sol" download>
               Download
             </a>
           </li>
           <li>
-            Vault: <code>setBot(keeperEOA)</code>, then{" "}
+            Bowl: <code>setBot(keeperEOA)</code>, then{" "}
             <code className="break-all">
               setMetadata("{LINKS.site}", "{LINKS.xHandle}", "{LINKS.github}", "{LINKS.telegram}")
             </code>
-            . After launch <code>setPoolId(poolId)</code>.
           </li>
           <li>
-            Board: <code>setBot(keeperEOA)</code>, <code>setVault(VAULT_CA)</code>.
+            Well: <code>setBot(keeperEOA)</code>, <code>setVault(BOWL_CA)</code>
           </li>
           <li>
             Launch on{" "}
@@ -186,55 +173,22 @@ function DocsPage() {
             >
               letscash.fun/launch
             </a>
-            : name Catris, symbol {CATRIS.symbol}, fee 1%, pair ETH. Then hand
-            the creator stream to <code>VAULT_CA</code> with{" "}
-            <code>updateCreator(poolId, VAULT_CA)</code>, call{" "}
-            <code>setPoolId</code> and <code>setTokenCA(TOKEN_CA)</code> on the
-            vault.
+            : name Catris, symbol {CATRIS.symbol}, pair ETH, image{" "}
+            <code>https://www.catris.xyz/token-logo.jpg</code>. Then{" "}
+            <code>updateCreator(poolId, BOWL_CA)</code>.
+          </li>
+          <li>
+            Bowl: <code>setPoolId</code>, <code>setTokenCA</code>. Site env:{" "}
+            <code>VITE_VAULT_CA</code> <code>VITE_BOARD_CA</code>{" "}
+            <code>VITE_TOKEN_CA</code> <code>VITE_KEEPER_URL</code>.
           </li>
         </ol>
-      </Section>
-
-      <Section title="Keeper and site env">
-        <p>
-          Bot source:{" "}
-          <a
-            className="underline decoration-border underline-offset-4"
-            href="/keeper/epoch-bot.mjs"
-            download
-          >
-            epoch-bot.mjs
-          </a>{" "}
-          +{" "}
-          <a
-            className="underline decoration-border underline-offset-4"
-            href="/keeper/package.json"
-            download
-          >
-            package.json
-          </a>
-          . Env: <code>RPC_URL</code>, <code>BOT_PRIVATE_KEY</code>,{" "}
-          <code>VAULT_CA</code>, <code>BOARD_CA</code>, <code>TOKEN_CA</code>,{" "}
-          <code>MIN_CLAIM_ETH</code>. Fund the keeper with ~0.1 ETH for gas.
+        <p className="mt-3 text-sm">
+          letscash takes a platform cut on every trade and leaves a creator
+          stream on the hook. The Bowl claims that stream. Pounce / Cream /
+          Whiskers split whatever lands. The launch form fee is fixed by the
+          pad — we do not advertise a rate on the cabinet.
         </p>
-        <p>
-          After deploy set <code>VITE_VAULT_CA</code>, <code>VITE_BOARD_CA</code>,{" "}
-          <code>VITE_TOKEN_CA</code>, <code>VITE_KEEPER_URL</code>. Until those
-          exist the arcade still runs — scores live on the shared board, chain
-          writes wait for the keeper.
-        </p>
-        <ul className="mt-3 list-disc space-y-2 pl-5">
-          <li>
-            Empty hook tab no longer reverts — the keeper pokes{" "}
-            <code>harvest()</code> every epoch, which calls{" "}
-            <code>hook.claim(poolId)</code> as the vault.
-          </li>
-          <li>Reentrancy lock on prize, drip, team, and harvest. Winner payout capped at 80% of the prize bucket.</li>
-          <li>
-            Score signatures are <code>personal_sign</code>, the message wallets
-            actually produce.
-          </li>
-        </ul>
       </Section>
     </div>
   );

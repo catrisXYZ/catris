@@ -3,7 +3,7 @@ import { drawCatSprite, preloadCats } from "@/lib/game/cats";
 import { ALL_SPRITE_COLORS, PIECES } from "@/lib/game/pieces";
 import type { Role } from "@/lib/game/types";
 
-type Variant = "arena" | "vault" | "docs";
+type Variant = "arena" | "vault" | "docs" | "bowl" | "well" | "pounce" | "cream" | "whiskers";
 
 const COLS = 10;
 const ROWS = 7;
@@ -15,7 +15,19 @@ const STACKS: Record<Variant, { piece: number; x: number; y: number }[]> = {
     { piece: 2, x: 6, y: 4 },
     { piece: 5, x: 4, y: 2 },
   ],
+  well: [
+    { piece: 0, x: 3, y: 5 },
+    { piece: 1, x: 1, y: 3 },
+    { piece: 2, x: 6, y: 4 },
+    { piece: 5, x: 4, y: 2 },
+  ],
   vault: [
+    { piece: 3, x: 0, y: 4 },
+    { piece: 4, x: 3, y: 4 },
+    { piece: 6, x: 7, y: 4 },
+    { piece: 1, x: 4, y: 2 },
+  ],
+  bowl: [
     { piece: 3, x: 0, y: 4 },
     { piece: 4, x: 3, y: 4 },
     { piece: 6, x: 7, y: 4 },
@@ -27,12 +39,34 @@ const STACKS: Record<Variant, { piece: number; x: number; y: number }[]> = {
     { piece: 6, x: 6, y: 2 },
     { piece: 0, x: 3, y: 0 },
   ],
+  pounce: [
+    { piece: 6, x: 2, y: 5 },
+    { piece: 2, x: 5, y: 4 },
+    { piece: 0, x: 3, y: 1 },
+  ],
+  cream: [
+    { piece: 1, x: 2, y: 5 },
+    { piece: 5, x: 5, y: 4 },
+    { piece: 3, x: 0, y: 3 },
+    { piece: 4, x: 7, y: 3 },
+  ],
+  whiskers: [
+    { piece: 2, x: 1, y: 5 },
+    { piece: 2, x: 4, y: 5 },
+    { piece: 2, x: 7, y: 5 },
+    { piece: 0, x: 3, y: 2 },
+  ],
 };
 
 const COPY: Record<Variant, { kicker: string; title: string }> = {
-  arena: { kicker: "This epoch", title: "Highest run takes 60%" },
-  vault: { kicker: "Fee split", title: "60 prize · 30 drip · 10 team" },
+  arena: { kicker: "This epoch", title: "Highest run takes the pot" },
+  well: { kicker: "The well", title: "Ten by twenty. No rent control." },
+  vault: { kicker: "The bowl", title: "Treats land here" },
+  bowl: { kicker: "The bowl", title: "Treats land here" },
   docs: { kicker: "Manual", title: "Stack · spin · drop" },
+  pounce: { kicker: "Pounce", title: "One winner. Fifteen minutes." },
+  cream: { kicker: "Cream", title: "Holders lap the leftover milk" },
+  whiskers: { kicker: "Whiskers", title: "The crew that keeps the litter clean" },
 };
 
 export function PageWell({ variant }: { variant: Variant }) {

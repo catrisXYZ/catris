@@ -2,13 +2,13 @@
 
 Compiler: Solidity **0.8.24**, optimization **200** runs. Network: Robinhood Chain **4663**.
 
-1. Deploy `CatrisVault.sol` with constructor `_teamWallet`.
-2. Deploy `CatrisBoard.sol` (no args).
-3. Vault: `setBot(keeperEOA)` · Board: `setBot(keeperEOA)`, `setVault(VAULT_CA)`.
-4. Launch on [letscash.fun/launch](https://letscash.fun/launch): name Catris, symbol CATRIS, fee **1%**, pair ETH.
-5. Hand the creator stream to the **vault address** (`updateCreator(poolId, VAULT_CA)`).
-6. Vault: `setPoolId(poolId)`, `setTokenCA(TOKEN_CA)`.
+1. Deploy `CatrisVault.sol` (The Bowl) with constructor `_teamWallet` (Whiskers).
+2. Deploy `CatrisBoard.sol` (The Well) — no args.
+3. Bowl: `setBot(keeperEOA)` · Well: `setBot(keeperEOA)`, `setVault(BOWL_CA)`.
+4. Launch on [letscash.fun/launch](https://letscash.fun/launch): name Catris, symbol CATRIS, pair ETH.
+5. Hand the creator stream to the **Bowl** (`updateCreator(poolId, BOWL_CA)`).
+6. Bowl: `setPoolId(poolId)`, `setTokenCA(TOKEN_CA)`.
 
-Fee split: 60% epoch prize / 30% holder drip / 10% team.
+Rooms inside the Bowl: Pounce (epoch prize) / Cream (holder drip) / Whiskers (crew).
 
-Full playbook: `/docs`. Keeper: `/keeper/epoch-bot.mjs`.
+Playbook: `/house` and `/docs`. Keeper: `/keeper/epoch-bot.mjs`.

@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ArenaRouteImport } from './routes/arena'
 import { Route as DocsRouteImport } from './routes/docs'
+import { Route as HouseRouteImport } from './routes/house'
 import { Route as PlayRouteImport } from './routes/play'
 import { Route as TreasuryRouteImport } from './routes/treasury'
 
@@ -30,6 +31,11 @@ const DocsRoute = DocsRouteImport.update({
   path: '/docs',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HouseRoute = HouseRouteImport.update({
+  id: '/house',
+  path: '/house',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PlayRoute = PlayRouteImport.update({
   id: '/play',
   path: '/play',
@@ -45,6 +51,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/arena': typeof ArenaRoute
   '/docs': typeof DocsRoute
+  '/house': typeof HouseRoute
   '/play': typeof PlayRoute
   '/treasury': typeof TreasuryRoute
 }
@@ -52,6 +59,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/arena': typeof ArenaRoute
   '/docs': typeof DocsRoute
+  '/house': typeof HouseRoute
   '/play': typeof PlayRoute
   '/treasury': typeof TreasuryRoute
 }
@@ -60,21 +68,23 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/arena': typeof ArenaRoute
   '/docs': typeof DocsRoute
+  '/house': typeof HouseRoute
   '/play': typeof PlayRoute
   '/treasury': typeof TreasuryRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/arena' | '/docs' | '/play' | '/treasury'
+  fullPaths: '/' | '/arena' | '/docs' | '/house' | '/play' | '/treasury'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/arena' | '/docs' | '/play' | '/treasury'
-  id: '__root__' | '/' | '/arena' | '/docs' | '/play' | '/treasury'
+  to: '/' | '/arena' | '/docs' | '/house' | '/play' | '/treasury'
+  id: '__root__' | '/' | '/arena' | '/docs' | '/house' | '/play' | '/treasury'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ArenaRoute: typeof ArenaRoute
   DocsRoute: typeof DocsRoute
+  HouseRoute: typeof HouseRoute
   PlayRoute: typeof PlayRoute
   TreasuryRoute: typeof TreasuryRoute
 }
@@ -102,6 +112,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DocsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/house': {
+      id: '/house'
+      path: '/house'
+      fullPath: '/house'
+      preLoaderRoute: typeof HouseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/play': {
       id: '/play'
       path: '/play'
@@ -123,6 +140,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ArenaRoute: ArenaRoute,
   DocsRoute: DocsRoute,
+  HouseRoute: HouseRoute,
   PlayRoute: PlayRoute,
   TreasuryRoute: TreasuryRoute,
 }

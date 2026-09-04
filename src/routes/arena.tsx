@@ -38,7 +38,7 @@ function ArenaPage() {
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
         <div>
-          <p className="text-xs tracking-[0.2em] text-muted uppercase">15-minute pot</p>
+          <p className="text-xs tracking-[0.2em] text-muted uppercase">The well</p>
           <div className="mt-2 flex flex-wrap items-end justify-between gap-3">
             <h1 className="font-display text-4xl italic tracking-tight">
               Epoch {epoch ?? "—"}
@@ -46,22 +46,27 @@ function ArenaPage() {
             <p className="font-display text-3xl tabular tracking-tight text-accent">{clock}</p>
           </div>
           <p className="mt-3 max-w-2xl text-muted">
-            60% of every harvested letscash.fun tax drop pays this window’s top
-            score. The keeper settles on the Board; holders claim the 30% drip
-            from the merkle root.
+            Fifteen minutes. Highest stack takes Pounce. Cream drips to holders
+            when the keeper rings the bell. Post a run from Play — no gas if
+            you sign.
           </p>
         </div>
-        <PageWell variant="arena" />
+        <PageWell variant="well" />
       </div>
 
-      <BoardTable rows={rows} empty="No runs yet this epoch." error={error} />
+      <BoardTable rows={rows} empty="No runs yet this epoch. The well is empty." error={error} />
 
       <h2 className="mt-12 font-display text-2xl italic">All-time well</h2>
       <BoardTable rows={allTime} empty="No runs posted." error={null} />
 
-      <div className="mt-8">
+      <div className="mt-8 flex flex-wrap gap-3">
         <Button variant="accent" asChild>
           <Link to="/play">Drop a run</Link>
+        </Button>
+        <Button variant="outline" asChild>
+          <Link to="/house" search={{ room: "pounce" }}>
+            What is Pounce
+          </Link>
         </Button>
       </div>
     </div>

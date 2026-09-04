@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { HeroWell } from "@/components/game/HeroWell";
-import { CATRIS, FEE_SPLIT, LETSCASH, LINKS } from "@/lib/chain";
+import { HOUSE } from "@/lib/house";
+import { LETSCASH, LINKS } from "@/lib/chain";
 import { ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/")({ component: Home });
@@ -12,20 +13,19 @@ function Home() {
       <section className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:py-20">
         <div>
           <p className="text-xs tracking-[0.22em] text-muted uppercase">
-            Robinhood Chain · letscash.fun · 1% trade tax
+            Tetris with cats · Robinhood Chain
           </p>
           <h1 className="mt-4 font-display text-5xl leading-[1.05] tracking-tight italic sm:text-6xl lg:text-7xl">
             Cats fall.
             <br />
             Lines clear.
             <br />
-            Tax feeds the litter.
+            The cats always land.
           </h1>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
-            Catris is the original js13k kitten tetris, rebuilt as a DApp. Launch
-            $CATRIS on letscash.fun, hand the creator ETH stream to a vault —
-            never an EOA — and pay a 15-minute epoch winner plus holder drip
-            from the same pot.
+            Original js13k kittens, overflowing the cell on purpose. Ten by
+            twenty. Fifteen-minute pots. Treats land in a bowl contract — never
+            a personal wallet.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button variant="accent" size="lg" asChild>
@@ -35,9 +35,7 @@ function Home() {
               </Link>
             </Button>
             <Button variant="outline" size="lg" asChild>
-              <a href={LETSCASH.launch} target="_blank" rel="noreferrer">
-                Launch on letscash.fun
-              </a>
+              <Link to="/house" search={{ room: "bowl" }}>Tour the house</Link>
             </Button>
             <Button variant="ghost" size="lg" asChild>
               <a href={LINKS.telegram} target="_blank" rel="noreferrer">
@@ -58,35 +56,43 @@ function Home() {
           />
           <Feature
             kicker="02"
-            title="Tax"
-            body="Launch at 1% on letscash.fun (0.7% creator stream). Point that stream at the Catris vault contract, not a private wallet."
+            title="The well"
+            body="Ten across, twenty down. A 15-minute clock. Highest stack takes Pounce. Game over is Litter full."
           />
           <Feature
             kicker="03"
-            title="Split"
-            body="Every harvested drop splits 60% epoch prize, 30% holder drip (merkle), 10% team. Epochs last 15 minutes."
+            title="The bowl"
+            body="The creator stream feeds a vault contract. Pounce drinks first, cream for holders, whiskers for the crew."
           />
         </div>
       </section>
 
       <section className="border-t border-border">
         <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
-          <h2 className="font-display text-3xl italic tracking-tight">Fee anatomy</h2>
+          <h2 className="font-display text-3xl italic tracking-tight">Five rooms</h2>
           <p className="mt-2 max-w-2xl text-muted">
-            Every trade on the Uniswap v4 pool pays a 1% tax in ETH — 0.7%
-            creator, 0.3% platform. No bonding curve, no migration. The creator
-            share streams to the vault. The vault splits every epoch.
+            Two contracts at launch. Three more rooms live inside the Bowl.
+            The weekly PONS drafts stay in the attic.
           </p>
-          <ol className="mt-8 grid gap-3 md:grid-cols-3">
-            {FEE_SPLIT.map((s) => (
-              <li key={s.key} className="rounded-xl border border-border bg-surface p-5">
-                <p className="font-display text-3xl tabular text-accent">{s.share}</p>
-                <p className="mt-2 text-sm text-fg">{s.label}</p>
+          <ol className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+            {HOUSE.map((room) => (
+              <li key={room.id}>
+                <Link
+                  to="/house"
+                  search={{ room: room.id }}
+                  className="block h-full rounded-xl border border-border bg-surface p-5 transition-colors duration-150 hover:border-border-strong hover:bg-elevated"
+                >
+                  <p className="text-xs tracking-widest text-muted uppercase">{room.kicker}</p>
+                  <p className="mt-2 font-display text-xl italic">{room.name}</p>
+                  <p className="mt-2 text-sm text-subtle">
+                    {room.deploy === "launch" ? room.contract : "Inside the Bowl"}
+                  </p>
+                </Link>
               </li>
             ))}
           </ol>
           <p className="mt-6 text-sm text-muted">
-            Token {CATRIS.symbol} · tax {CATRIS.creatorTaxBps / 100}% ·{" "}
+            $CATRIS launches on{" "}
             <a
               className="underline decoration-border underline-offset-4 hover:text-fg"
               href={LETSCASH.launch}
@@ -95,6 +101,7 @@ function Home() {
             >
               letscash.fun
             </a>
+            . LP locked. No bonding curve.
           </p>
         </div>
       </section>

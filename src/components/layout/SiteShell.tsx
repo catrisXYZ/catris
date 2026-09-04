@@ -7,9 +7,9 @@ import { cn } from "@/lib/utils";
 const NAV = [
   { to: "/", label: "Home" },
   { to: "/play", label: "Play" },
-  { to: "/arena", label: "Arena" },
-  { to: "/treasury", label: "Vault" },
-  { to: "/docs", label: "Docs" },
+  { to: "/arena", label: "Well" },
+  { to: "/house", label: "House" },
+  { to: "/docs", label: "Manual" },
 ] as const;
 
 const SOCIAL = [
@@ -39,11 +39,13 @@ export function SiteShell({ children }: { children: ReactNode }) {
               const active =
                 item.to === "/"
                   ? pathname === "/"
-                  : pathname.startsWith(item.to);
+                  : pathname.startsWith(item.to) ||
+                    (item.to === "/house" && pathname.startsWith("/treasury"));
               return (
                 <Link
                   key={item.to}
                   to={item.to}
+                  search={item.to === "/house" ? { room: "bowl" } : undefined}
                   className={cn(
                     "rounded-sm px-2.5 py-1.5 transition-colors duration-150",
                     active ? "bg-elevated text-fg" : "text-muted hover:text-fg",
@@ -61,7 +63,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
       {pathname !== "/play" && (
       <footer className="border-t border-border">
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-8 text-sm text-muted sm:flex-row sm:items-center sm:justify-between sm:px-6">
-          <p>Catris on Robinhood Chain. Launched on letscash.fun. 15-minute pots.</p>
+          <p>Tetris with cats. 15-minute pots. The cats always land.</p>
           <nav className="flex flex-wrap items-center gap-x-4 gap-y-1">
             {SOCIAL.map((s) => (
               <a

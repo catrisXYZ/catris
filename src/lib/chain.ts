@@ -91,9 +91,9 @@ export const KEEPER_URL =
   ((import.meta.env as Record<string, string | undefined>).VITE_KEEPER_URL ?? "").replace(/\/$/, "");
 
 export const FEE_SPLIT = [
-  { key: "prize", label: "Epoch prize (top score)", bps: 6000, share: "60%" },
-  { key: "drip", label: "Holder drip (merkle)", bps: 3000, share: "30%" },
-  { key: "team", label: "Team", bps: 1000, share: "10%" },
+  { key: "prize", label: "Pounce — epoch winner", bps: 6000, share: "60%" },
+  { key: "drip", label: "Cream — holder drip", bps: 3000, share: "30%" },
+  { key: "team", label: "Whiskers — the crew", bps: 1000, share: "10%" },
 ] as const;
 
 export function explorerTx(hash: string) {
