@@ -81,8 +81,9 @@ export const LINKS = {
   githubUser: "catrisXYZ",
   x: "https://x.com/catrisXYZ",
   xHandle: "catrisXYZ",
-  telegram: "https://t.me/catrisXYZ",
-  telegramHandle: "catrisXYZ",
+  telegram: "https://t.me/CatrisRH",
+  telegramHandle: "CatrisRH",
+  telegramAnnounce: "https://t.me/catrisXYZ",
   vercel: "https://vercel.com/catris",
 } as const;
 

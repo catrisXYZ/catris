@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { HeroWell } from "@/components/game/HeroWell";
-import { CATRIS, FEE_SPLIT, LETSCASH } from "@/lib/chain";
+import { CATRIS, FEE_SPLIT, LETSCASH, LINKS } from "@/lib/chain";
 import { ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/")({ component: Home });
@@ -37,6 +37,11 @@ function Home() {
             <Button variant="outline" size="lg" asChild>
               <a href={LETSCASH.launch} target="_blank" rel="noreferrer">
                 Launch on letscash.fun
+              </a>
+            </Button>
+            <Button variant="ghost" size="lg" asChild>
+              <a href={LINKS.telegram} target="_blank" rel="noreferrer">
+                Join @CatrisRH
               </a>
             </Button>
           </div>

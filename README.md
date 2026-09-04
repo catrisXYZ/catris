@@ -7,7 +7,7 @@ ETH stream feeds a vault — never an EOA — split **60 / 30 / 10** across a
 
 - Play: [catris.xyz](https://catris.xyz)
 - X: [@catrisXYZ](https://x.com/catrisXYZ)
-- Telegram: [t.me/catrisXYZ](https://t.me/catrisXYZ)
+- Telegram community: [@CatrisRH](https://t.me/CatrisRH)
 - Launchpad: [letscash.fun](https://letscash.fun/launch)
 
 ## Stack

@@ -24,7 +24,8 @@ function DocsPage() {
         <Row k="Play" v="catris.xyz/play" href={`${LINKS.site}/play`} />
         <Row k="Arena" v="catris.xyz/arena" href={`${LINKS.site}/arena`} />
         <Row k="Launchpad" v="letscash.fun" href={LETSCASH.launch} />
-        <Row k="X / Telegram" v={`@${LINKS.xHandle}`} href={LINKS.x} />
+        <Row k="X" v={`@${LINKS.xHandle}`} href={LINKS.x} />
+        <Row k="TG community" v={`@${LINKS.telegramHandle}`} href={LINKS.telegram} />
       </dl>
 
       <Section title="The well">

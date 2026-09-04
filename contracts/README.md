@@ -38,7 +38,7 @@ Hardening vs the first draft:
 
 1. `CatrisVault(teamWallet)` → `VAULT_CA`
 2. `CatrisBoard()` → `BOARD_CA`
-3. Vault: `setBot(keeperEOA)`, `setMetadata("https://catris.xyz", "catrisXYZ", "https://github.com/catrisXYZ", "https://t.me/catrisXYZ")`
+3. Vault: `setBot(keeperEOA)`, `setMetadata("https://catris.xyz", "catrisXYZ", "https://github.com/catrisXYZ", "https://t.me/CatrisRH")`
 4. Board: `setBot(keeperEOA)`, `setVault(VAULT_CA)`
 5. Launch **CATRIS** on [letscash.fun](https://letscash.fun/launch)
    - Name `Catris`, symbol `CATRIS`, fee **3%**, pair ETH
