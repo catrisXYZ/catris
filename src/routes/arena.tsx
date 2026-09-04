@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { PageWell } from "@/components/game/PageWell";
 import { listScores, type ScoreRow } from "@/lib/scores";
 import { useEpochClock } from "@/lib/use-epoch";
 import { formatScore, shortAddress } from "@/lib/utils";
@@ -35,17 +36,22 @@ function ArenaPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <p className="text-xs tracking-[0.2em] text-muted uppercase">15-minute pot</p>
-      <div className="mt-2 flex flex-wrap items-end justify-between gap-3">
-        <h1 className="font-display text-4xl italic tracking-tight">
-          Epoch {epoch ?? "—"}
-        </h1>
-        <p className="font-display text-3xl tabular tracking-tight text-accent">{clock}</p>
+      <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
+        <div>
+          <p className="text-xs tracking-[0.2em] text-muted uppercase">15-minute pot</p>
+          <div className="mt-2 flex flex-wrap items-end justify-between gap-3">
+            <h1 className="font-display text-4xl italic tracking-tight">
+              Epoch {epoch ?? "—"}
+            </h1>
+            <p className="font-display text-3xl tabular tracking-tight text-accent">{clock}</p>
+          </div>
+          <p className="mt-3 max-w-2xl text-muted">
+            60% of every harvested tax drop pays this window’s top score. The keeper
+            settles on the Board; holders claim the 30% drip from the merkle root.
+          </p>
+        </div>
+        <PageWell variant="arena" />
       </div>
-      <p className="mt-3 max-w-2xl text-muted">
-        60% of every harvested tax drop pays this window’s top score. The keeper
-        settles on the Board; holders claim the 30% drip from the merkle root.
-      </p>
 
       <BoardTable rows={rows} empty="No runs yet this epoch." error={error} />
 

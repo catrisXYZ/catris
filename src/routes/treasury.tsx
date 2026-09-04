@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { PageWell } from "@/components/game/PageWell";
 import {
   CATRIS,
   FEE_SPLIT,
@@ -34,12 +35,17 @@ function TreasuryPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <p className="text-xs tracking-[0.2em] text-muted uppercase">On-chain vault</p>
-      <h1 className="mt-2 font-display text-4xl italic tracking-tight">Vault</h1>
-      <p className="mt-3 max-w-2xl text-muted">
-        Set this contract as the PONS <span className="text-fg">creatorFeeRecipient</span>.
-        The keeper claims escrow every 15 minutes and splits 60 / 30 / 10.
-      </p>
+      <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
+        <div>
+          <p className="text-xs tracking-[0.2em] text-muted uppercase">On-chain vault</p>
+          <h1 className="mt-2 font-display text-4xl italic tracking-tight">Vault</h1>
+          <p className="mt-3 max-w-2xl text-muted">
+            Set this contract as the PONS <span className="text-fg">creatorFeeRecipient</span>.
+            The keeper claims escrow every 15 minutes and splits 60 / 30 / 10.
+          </p>
+        </div>
+        <PageWell variant="vault" />
+      </div>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-3">
         <Panel

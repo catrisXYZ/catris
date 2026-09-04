@@ -55,6 +55,8 @@ function KeyCap({ children }: { children: string }) {
 
 export function CatrisBoard() {
   const hostRef = useRef<HTMLCanvasElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const frameRef = useRef<HTMLDivElement>(null);
   const holdRef = useRef<HTMLCanvasElement>(null);
   const nextRefs = useRef<Array<HTMLCanvasElement | null>>([]);
   const engineRef = useRef<CatrisEngine | null>(null);
@@ -132,14 +134,24 @@ export function CatrisBoard() {
 
   useEffect(() => {
     const canvas = hostRef.current;
-    if (!canvas) return;
+    const frame = frameRef.current;
+    const stage = stageRef.current;
+    if (!canvas || !frame || !stage) return;
     const fit = () => {
       const dpr = Math.min(2, window.devicePixelRatio || 1);
-      const cssW = canvas.clientWidth;
-      const cssH = (cssW / COLS) * ROWS;
+      const mobile = window.matchMedia("(max-width: 1023px)").matches;
+      const padH = mobile ? 64 : 8;
+      const maxW = Math.min(stage.clientWidth || 360, 360);
+      const maxH = Math.max(260, (stage.clientHeight || 480) - padH);
+      const cell = Math.max(12, Math.floor(Math.min(maxW / COLS, maxH / ROWS)));
+      const cssW = cell * COLS;
+      const cssH = cell * ROWS;
+      frame.style.width = `${cssW}px`;
+      frame.style.height = `${cssH}px`;
+      canvas.style.width = `${cssW}px`;
+      canvas.style.height = `${cssH}px`;
       canvas.width = Math.floor(cssW * dpr);
       canvas.height = Math.floor(cssH * dpr);
-      canvas.style.height = `${cssH}px`;
       [holdRef.current, ...nextRefs.current].forEach((el) => {
         if (!el) return;
         const s = el.clientWidth;
@@ -149,8 +161,12 @@ export function CatrisBoard() {
     };
     fit();
     const ro = new ResizeObserver(fit);
-    ro.observe(canvas);
-    return () => ro.disconnect();
+    ro.observe(stage);
+    window.addEventListener("resize", fit);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", fit);
+    };
   }, []);
 
   useEffect(() => {
@@ -300,12 +316,18 @@ export function CatrisBoard() {
   const overlayOpen = !snap?.started || snap.paused || snap.over;
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_220px] lg:items-start">
-      <div className="relative mx-auto w-full max-w-[min(100%,420px)] touch-none">
+    <div
+      ref={stageRef}
+      className="grid h-full min-h-0 gap-3 lg:grid-cols-[minmax(0,1fr)_200px] lg:items-stretch"
+    >
+      <div
+        ref={frameRef}
+        className="relative mx-auto touch-none overflow-hidden rounded-lg border border-border bg-surface"
+      >
         <canvas
           ref={hostRef}
-          className="block w-full rounded-lg border border-border bg-surface"
-          style={{ aspectRatio: `${COLS} / ${ROWS}`, touchAction: "none" }}
+          className="block"
+          style={{ touchAction: "none" }}
         />
         {snap?.overlay && snap.started && !snap.over && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">

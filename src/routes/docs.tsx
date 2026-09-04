@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import { PageWell } from "@/components/game/PageWell";
 import { CATRIS, LINKS, PONS } from "@/lib/chain";
 
 export const Route = createFileRoute("/docs")({ component: DocsPage });
@@ -7,7 +8,8 @@ export const Route = createFileRoute("/docs")({ component: DocsPage });
 function DocsPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
-      <p className="text-xs tracking-[0.2em] text-muted uppercase">Manual</p>
+      <PageWell variant="docs" />
+      <p className="mt-8 text-xs tracking-[0.2em] text-muted uppercase">Manual</p>
       <h1 className="mt-2 font-display text-4xl italic tracking-tight">
         Rules, mechanics, stack
       </h1>
