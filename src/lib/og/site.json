@@ -1,5 +1,6 @@
 {
   "title": "Catris",
+  "description": "Original-sprite cat tetris on Robinhood Chain. Launch on letscash.fun. A 3% trade tax feeds 15-minute epoch prizes and holder drip.",
   "type": "x:game",
   "card": "custom"
 }
