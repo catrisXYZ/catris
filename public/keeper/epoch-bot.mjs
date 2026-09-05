@@ -159,7 +159,9 @@ async function settle() {
   }
   const { prize, drip } = await vault.buckets();
   console.log(`[settle] epoch=${epochId} winner=${winner} score=${topScore} prize=${prize} drip=${drip}`);
-  const { root, leaves } = await buildDripTree(drip);
+  const onRoot = await vault.currentMerkleRoot();
+  const skipCream = onRoot && onRoot !== ZeroHash;
+  const { root, leaves } = skipCream ? { root: ZeroHash, leaves: [] } : await buildDripTree(drip);
   const winnerPrize =
     winner && winner !== ZeroAddress && prize > 0n ? (prize * 80n) / 100n : 0n;
   const tx = await vault.settleEpoch(epochId, root, winner, winnerPrize);
@@ -285,6 +287,10 @@ async function publishCreamIfNeeded() {
     const drip = await vault.dripWei();
     if (drip === 0n) {
       console.log("[cream] empty drip");
+      return;
+    }
+    if (onRoot && onRoot !== ZeroHash) {
+      console.log("[cream] root already live, leave it");
       return;
     }
     const { root, leaves } = await buildDripTree(drip);

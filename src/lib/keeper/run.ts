@@ -10,7 +10,7 @@ import { privateKeyToAccount } from "viem/accounts";
 import { boardAbi, letscashHookAbi, vaultAbi } from "@/lib/abis";
 import { CATRIS, LETSCASH, robinhoodChain } from "@/lib/chain";
 import { scoreMessage } from "@/lib/keeper-client";
-import { buildCreamTree, rememberCream } from "@/lib/keeper/merkle";
+import { loadPostedCream, postedCreamRoot } from "@/lib/keeper/merkle";
 
 const ZERO = "0x0000000000000000000000000000000000000000" as Address;
 const ZERO_HASH =
@@ -173,10 +173,9 @@ async function publishCream(ctx: NonNullable<ReturnType<typeof clients>>) {
     }),
   ]);
   if (drip === 0n) return null;
-  const tree = await buildCreamTree(drip);
-  rememberCream(tree);
-  if (tree.root === ZERO_HASH || tree.leaves.length === 0) return null;
-  if (onRoot.toLowerCase() === tree.root.toLowerCase()) return null;
+  const posted = postedCreamRoot();
+  loadPostedCream();
+  if (onRoot.toLowerCase() === posted.toLowerCase()) return null;
   const epochId = await ctx.publicClient.readContract({
     address: CATRIS.board,
     abi: boardAbi,
@@ -186,7 +185,7 @@ async function publishCream(ctx: NonNullable<ReturnType<typeof clients>>) {
     address: CATRIS.vault,
     abi: vaultAbi,
     functionName: "settleEpoch",
-    args: [epochId, tree.root, ZERO, 0n],
+    args: [epochId, posted, ZERO, 0n],
     account: ctx.account,
     chain: robinhoodChain,
   });

@@ -51,7 +51,7 @@ export function CreamClaim() {
   }, [address]);
 
   const eth = drip ? Number(drip).toFixed(3) : "—";
-  const mine = proof && proof.ok ? Number(formatEther(BigInt(proof.amount))).toFixed(5) : null;
+  const mine = proof && proof.ok ? Number(formatEther(BigInt(proof.amount))).toFixed(4) : null;
 
   const claim = async () => {
     if (!address || !proof || !proof.ok) return;
@@ -97,16 +97,20 @@ export function CreamClaim() {
           </Button>
         ) : (
           <Button variant="accent" disabled={busy || !proof || !proof.ok} onClick={() => void claim()}>
-            {busy ? "Claiming…" : "Claim Cream"}
+            {busy ? "Claiming…" : proof === null ? "Looking up…" : "Claim Cream"}
           </Button>
         )}
       </div>
       <p className="mt-3 text-sm text-subtle">
         {note
           ? note
-          : proof && !proof.ok
-            ? proof.error ?? "No cream this window."
-            : "The Bowl pays. Not letscash. Gas is a sip."}
+          : !address
+            ? "Connect the wallet that holds $CATRIS."
+            : proof === null
+              ? "Looking up your sip…"
+              : !proof.ok
+                ? proof.error ?? "No cream this window."
+                : "The Bowl pays. Not letscash. Gas is a sip."}
       </p>
     </div>
   );

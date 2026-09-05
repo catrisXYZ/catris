@@ -9,6 +9,8 @@ import {
   parseAbiItem,
   zeroAddress,
 } from "viem";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { CATRIS, LETSCASH, robinhoodChain } from "@/lib/chain";
 
 export type CreamLeaf = { address: Address; amount: bigint; leaf: Hex };
@@ -150,4 +152,26 @@ export function proofFor(player: string) {
     amount: leaf.amount.toString(),
     proof: getProof(snap.layers, idx),
   };
+}
+
+function readPostedSnap() {
+  const raw = readFileSync(join(process.cwd(), "public/cream-merkle.json"), "utf8");
+  return JSON.parse(raw) as { root: Hex; leaves: { address: string; amount: string; leaf: string }[] };
+}
+
+export function loadPostedCream() {
+  const snap = readPostedSnap();
+  const leaves: CreamLeaf[] = snap.leaves.map((l) => ({
+    address: l.address as Address,
+    amount: BigInt(l.amount),
+    leaf: l.leaf as Hex,
+  }));
+  const { layers } = buildTree(leaves.map((l) => l.leaf));
+  const data = { root: snap.root, leaves, layers };
+  rememberCream(data);
+  return data;
+}
+
+export function postedCreamRoot(): Hex {
+  return readPostedSnap().root;
 }

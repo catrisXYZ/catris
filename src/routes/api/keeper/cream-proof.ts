@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createPublicClient, http } from "viem";
 import { vaultAbi } from "@/lib/abis";
 import { CATRIS, robinhoodChain } from "@/lib/chain";
-import { buildCreamTree, proofFor, rememberCream, recalledCream } from "@/lib/keeper/merkle";
+import { loadPostedCream, postedCreamRoot, proofFor } from "@/lib/keeper/merkle";
 
 export const Route = createFileRoute("/api/keeper/cream-proof")({
   server: {
@@ -16,25 +16,24 @@ export const Route = createFileRoute("/api/keeper/cream-proof")({
           chain: robinhoodChain,
           transport: http(robinhoodChain.rpcUrls.default.http[0]),
         });
-        const [drip, onRoot] = await Promise.all([
-          client.readContract({ address: CATRIS.vault, abi: vaultAbi, functionName: "dripWei" }),
-          client.readContract({
+        let onRoot: `0x${string}`;
+        try {
+          onRoot = await client.readContract({
             address: CATRIS.vault,
             abi: vaultAbi,
             functionName: "currentMerkleRoot",
-          }),
-        ]);
+          });
+        } catch {
+          return Response.json({ ok: false, error: "chain busy, retry" });
+        }
+        const posted = postedCreamRoot();
         if (onRoot === "0x0000000000000000000000000000000000000000000000000000000000000000") {
-          return Response.json({ ok: false, error: "no cream list yet", drip: drip.toString() });
+          return Response.json({ ok: false, error: "no cream list yet" });
         }
-        let snap = recalledCream();
-        if (!snap || snap.root.toLowerCase() !== onRoot.toLowerCase()) {
-          snap = await buildCreamTree(drip);
-          rememberCream(snap);
+        if (onRoot.toLowerCase() !== posted.toLowerCase()) {
+          return Response.json({ ok: false, error: "list catching up — refresh in a minute" });
         }
-        if (snap.root.toLowerCase() !== onRoot.toLowerCase()) {
-          return Response.json({ ok: false, error: "list moved, wait for the next knock" });
-        }
+        loadPostedCream();
         const proof = proofFor(player);
         if (!proof) return Response.json({ ok: false, error: "not on this list" });
         return Response.json({ ok: true, ...proof });
