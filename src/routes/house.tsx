@@ -4,6 +4,7 @@ import { PageWell } from "@/components/game/PageWell";
 import { HOUSE, HOUSE_NAV, roomById, type RoomId } from "@/lib/house";
 import { CATRIS, explorerAddress, isDeployed, LETSCASH } from "@/lib/chain";
 import { cn } from "@/lib/utils";
+import { CreamClaim } from "@/components/house/CreamClaim";
 
 const ROOMS: RoomId[] = ["bowl", "well", "pounce", "cream", "whiskers"];
 
@@ -102,6 +103,7 @@ function HousePage() {
               </Button>
             )}
           </div>
+          {room.id === "cream" && <CreamClaim />}
         </div>
         <PageWell variant={room.well} />
       </div>
