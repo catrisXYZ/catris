@@ -24,6 +24,10 @@ import {
 const RPC = process.env.RPC_URL || "https://rpc.mainnet.chain.robinhood.com";
 const EPOCH_DURATION = 15 * 60;
 const ORIGIN = process.env.ALLOW_ORIGIN || "*";
+const BOT_KEY = process.env.BOT_PRIVATE_KEY || process.env.KEEPER_PRIVATE_KEY;
+const VAULT_CA = process.env.VAULT_CA || "0x9Ae3421e6537eEEdea456c56b7A96AEE6fF59AB6";
+const BOARD_CA = process.env.BOARD_CA || "0xc0a3585E448dCa1785558069333D620eA55452f9";
+const TOKEN_CA = process.env.TOKEN_CA || "0x305cFA66eC6F2Db53a37F9c3EdeDcc95Cc2aC8cc";
 
 const VAULT_ABI = [
   "function settleEpoch(uint256 epochId, bytes32 merkleRoot, address winner, uint256 winnerPrize) external",
@@ -45,16 +49,16 @@ const ERC20_ABI = [
   "event Transfer(address indexed from, address indexed to, uint256 value)",
 ];
 
-if (!process.env.BOT_PRIVATE_KEY || !process.env.VAULT_CA || !process.env.BOARD_CA) {
-  console.error("[catris-keeper] missing BOT_PRIVATE_KEY / VAULT_CA / BOARD_CA");
+if (!BOT_KEY) {
+  console.error("[catris-keeper] missing BOT_PRIVATE_KEY or KEEPER_PRIVATE_KEY");
   process.exit(1);
 }
 
 const provider = new JsonRpcProvider(RPC);
-const wallet = new Wallet(process.env.BOT_PRIVATE_KEY, provider);
-const vault = new Contract(process.env.VAULT_CA, VAULT_ABI, wallet);
-const board = new Contract(process.env.BOARD_CA, BOARD_ABI, wallet);
-const token = process.env.TOKEN_CA ? new Contract(process.env.TOKEN_CA, ERC20_ABI, provider) : null;
+const wallet = new Wallet(BOT_KEY, provider);
+const vault = new Contract(VAULT_CA, VAULT_ABI, wallet);
+const board = new Contract(BOARD_CA, BOARD_ABI, wallet);
+const token = TOKEN_CA ? new Contract(TOKEN_CA, ERC20_ABI, provider) : null;
 
 /** @type {{ root: string, leaves: { address: string, amount: bigint, leaf: string }[], epochId: string } | null} */
 let currentMerkleData = null;
