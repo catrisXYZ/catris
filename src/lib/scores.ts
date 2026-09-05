@@ -59,6 +59,7 @@ export const listScores = createServerFn({ method: "GET" })
     }),
   )
   .handler(async ({ data }) => {
+    try {
     await seedIfEmpty();
     const sql = await getSql();
     const limit = data.limit ?? 20;
@@ -82,6 +83,9 @@ export const listScores = createServerFn({ method: "GET" })
       limit ${limit}
     `;
     return { season, rows };
+    } catch {
+      return { season: data.season ?? 0, rows: [] };
+    }
   });
 
 export const submitScore = createServerFn({ method: "POST" })

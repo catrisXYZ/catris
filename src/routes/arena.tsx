@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PageWell } from "@/components/game/PageWell";
 import { listScores, type ScoreRow } from "@/lib/scores";
+import { readWellLeader } from "@/lib/onchain";
 import { useEpochClock } from "@/lib/use-epoch";
 import { formatScore, shortAddress } from "@/lib/utils";
 
@@ -20,11 +21,35 @@ function ArenaPage() {
     Promise.all([
       listScores({ data: { season: epoch, limit: 15 } }),
       listScores({ data: { all: true, limit: 10 } }),
+      readWellLeader(),
     ])
-      .then(([cur, all]) => {
+      .then(([cur, all, leader]) => {
         if (!live) return;
-        setRows(cur.rows);
+        const chainRows: ScoreRow[] = [];
+        if (leader?.winner && leader.score !== "0") {
+          chainRows.push({
+            id: 1,
+            handle: "On-chain",
+            wallet: leader.winner,
+            score: Number(leader.score),
+            lines: 0,
+            specials: 0,
+            duration_ms: 0,
+            season: Number(leader.epoch),
+            created_at: "",
+          });
+        }
+        const merged = chainRows.length
+          ? [
+              ...chainRows,
+              ...cur.rows.filter(
+                (r) => r.wallet?.toLowerCase() !== chainRows[0].wallet.toLowerCase(),
+              ),
+            ]
+          : cur.rows;
+        setRows(merged);
         setAllTime(all.rows);
+        setError(null);
       })
       .catch((err: unknown) => {
         if (live) setError(err instanceof Error ? err.message : "Could not load scores.");
