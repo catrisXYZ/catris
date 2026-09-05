@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { vaultAbi } from "@/lib/abis";
 import { CATRIS, robinhoodChain } from "@/lib/chain";
 import { readVaultBuckets } from "@/lib/onchain";
+import { localCreamProof } from "@/lib/keeper/cream-local";
 import { useWallet } from "@/lib/wallet/store";
 
 type Proof = { ok: true; amount: string; proof: Hex[]; root: Hex } | { ok: false; error?: string };
@@ -36,27 +37,25 @@ export function CreamClaim() {
       setProof(null);
       return;
     }
-    let live = true;
-    fetch(`/api/keeper/cream-proof?player=${address}`)
-      .then((r) => r.json() as Promise<Proof>)
-      .then((p) => {
-        if (live) setProof(p);
-      })
-      .catch(() => {
-        if (live) setProof({ ok: false, error: "could not load list" });
-      });
-    return () => {
-      live = false;
-    };
+    const local = localCreamProof(address);
+    if (local) {
+      setProof(local);
+      return;
+    }
+    setProof({ ok: false, error: "not on this list" });
   }, [address]);
 
   const eth = drip ? Number(drip).toFixed(3) : "—";
   const mine = proof && proof.ok ? Number(formatEther(BigInt(proof.amount))).toFixed(4) : null;
+  const canClaim = Boolean(address && proof && proof.ok && !busy);
 
   const claim = async () => {
     if (!address || !proof || !proof.ok) return;
     const ethereum = (window as unknown as { ethereum?: { request: (a: unknown) => Promise<unknown> } }).ethereum;
-    if (!ethereum) return;
+    if (!ethereum) {
+      setNote("Open this page in a wallet browser (OKX).");
+      return;
+    }
     setBusy(true);
     setNote(null);
     try {
@@ -96,8 +95,8 @@ export function CreamClaim() {
             {connecting ? "Connecting" : "Connect to claim"}
           </Button>
         ) : (
-          <Button variant="accent" disabled={busy || !proof || !proof.ok} onClick={() => void claim()}>
-            {busy ? "Claiming…" : proof === null ? "Looking up…" : "Claim Cream"}
+          <Button variant="accent" disabled={!canClaim} onClick={() => void claim()}>
+            {busy ? "Claiming…" : mine ? `Claim ${mine} ETH` : "Claim Cream"}
           </Button>
         )}
       </div>
@@ -106,11 +105,11 @@ export function CreamClaim() {
           ? note
           : !address
             ? "Connect the wallet that holds $CATRIS."
-            : proof === null
+            : !proof
               ? "Looking up your sip…"
               : !proof.ok
                 ? proof.error ?? "No cream this window."
-                : "The Bowl pays. Not letscash. Gas is a sip."}
+                : "Robinhood Chain. Approve in OKX. Gas is a sip."}
       </p>
     </div>
   );
