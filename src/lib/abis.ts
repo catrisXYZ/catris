@@ -77,6 +77,20 @@ export const vaultAbi = [
   },
   {
     type: "function",
+    name: "currentMerkleRoot",
+    stateMutability: "view",
+    inputs: [],
+    outputs: [{ type: "bytes32" }],
+  },
+  {
+    type: "function",
+    name: "dripWei",
+    stateMutability: "view",
+    inputs: [],
+    outputs: [{ type: "uint256" }],
+  },
+  {
+    type: "function",
     name: "settleEpoch",
     stateMutability: "nonpayable",
     inputs: [

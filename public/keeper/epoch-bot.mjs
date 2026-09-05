@@ -34,6 +34,8 @@ const VAULT_ABI = [
   "function harvest() external",
   "function pendingTab() external view returns (uint256)",
   "function buckets() external view returns (uint256 prize, uint256 drip, uint256 team)",
+  "function currentMerkleRoot() view returns (bytes32)",
+  "function dripWei() view returns (uint256)",
 ];
 const BOARD_ABI = [
   "function submitScore(address player, uint256 score, uint256 lines, bytes32 nonce) external returns (bool)",
@@ -81,16 +83,43 @@ async function handleScoreSubmit(player, score, lines, nonce, signature) {
   return { ok: true, tx: tx.hash };
 }
 
+async function isContract(addr) {
+  try {
+    const code = await provider.getCode(addr);
+    return Boolean(code && code !== "0x");
+  } catch {
+    return true;
+  }
+}
+
 async function buildDripTree(dripPool) {
   if (!token || dripPool === 0n) return { root: ZeroHash, leaves: [] };
-  const events = await token.queryFilter(token.filters.Transfer(), -4000);
+  const start = 54700000;
+  const latest = await provider.getBlockNumber();
   const holders = new Set();
-  for (const e of events) {
-    if (e.args?.to && e.args.to !== ZeroAddress) holders.add(e.args.to);
+  const chunk = 8000;
+  for (let from = start; from <= latest; from += chunk) {
+    const to = Math.min(from + chunk - 1, latest);
+    try {
+      const events = await token.queryFilter(token.filters.Transfer(), from, to);
+      for (const e of events) {
+        if (e.args?.to && e.args.to !== ZeroAddress) holders.add(e.args.to);
+        if (e.args?.from && e.args.from !== ZeroAddress) holders.add(e.args.from);
+      }
+    } catch {
+      /* skip chunk */
+    }
   }
+  const skip = new Set([
+    ZeroAddress.toLowerCase(),
+    VAULT_CA.toLowerCase(),
+    BOARD_CA.toLowerCase(),
+  ]);
   const entries = [];
   for (const holder of holders) {
+    if (skip.has(String(holder).toLowerCase())) continue;
     try {
+      if (await isContract(holder)) continue;
       const bal = await token.balanceOf(holder);
       if (bal > 0n) entries.push({ address: holder, balance: bal });
     } catch {
@@ -250,8 +279,36 @@ const server = createServer(async (req, res) => {
   res.end(JSON.stringify({ error: "not found" }));
 });
 
+async function publishCreamIfNeeded() {
+  try {
+    const onRoot = await vault.currentMerkleRoot();
+    const drip = await vault.dripWei();
+    if (drip === 0n) {
+      console.log("[cream] empty drip");
+      return;
+    }
+    const { root, leaves } = await buildDripTree(drip);
+    if (root === ZeroHash || leaves.length === 0) {
+      console.log("[cream] empty tree");
+      return;
+    }
+    currentMerkleData = { root, leaves, epochId: "live" };
+    if (String(onRoot).toLowerCase() === String(root).toLowerCase()) {
+      console.log("[cream] root already live", root);
+      return;
+    }
+    const epochId = await board.currentEpoch();
+    const tx = await vault.settleEpoch(epochId, root, ZeroAddress, 0n);
+    await tx.wait();
+    console.log("[cream] published", tx.hash, "holders", leaves.length, "root", root);
+  } catch (e) {
+    console.error("[cream]", e instanceof Error ? e.message : e);
+  }
+}
+
 const PORT = Number(process.env.PORT ?? 3000);
 server.listen(PORT, () => {
-  console.log(`[catris-keeper] :${PORT} vault=${process.env.VAULT_CA}`);
+  console.log(`[catris-keeper] :${PORT} vault=${VAULT_CA}`);
   scheduleNextEpoch();
+  void publishCreamIfNeeded();
 });

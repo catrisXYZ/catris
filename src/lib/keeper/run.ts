@@ -10,6 +10,7 @@ import { privateKeyToAccount } from "viem/accounts";
 import { boardAbi, letscashHookAbi, vaultAbi } from "@/lib/abis";
 import { CATRIS, LETSCASH, robinhoodChain } from "@/lib/chain";
 import { scoreMessage } from "@/lib/keeper-client";
+import { buildCreamTree, rememberCream } from "@/lib/keeper/merkle";
 
 const ZERO = "0x0000000000000000000000000000000000000000" as Address;
 const ZERO_HASH =
@@ -148,5 +149,47 @@ export async function tick() {
     out.skipped?.push(`settle ${e instanceof Error ? e.message : "failed"}`);
   }
 
+  try {
+    const cream = await publishCream(ctx);
+    if (cream) Object.assign(out, { cream });
+  } catch (e) {
+    out.skipped?.push(`cream ${e instanceof Error ? e.message : "failed"}`);
+  }
+
   return { ok: true as const, ...out };
+}
+
+async function publishCream(ctx: NonNullable<ReturnType<typeof clients>>) {
+  const [drip, onRoot] = await Promise.all([
+    ctx.publicClient.readContract({
+      address: CATRIS.vault,
+      abi: vaultAbi,
+      functionName: "dripWei",
+    }),
+    ctx.publicClient.readContract({
+      address: CATRIS.vault,
+      abi: vaultAbi,
+      functionName: "currentMerkleRoot",
+    }),
+  ]);
+  if (drip === 0n) return null;
+  const tree = await buildCreamTree(drip);
+  rememberCream(tree);
+  if (tree.root === ZERO_HASH || tree.leaves.length === 0) return null;
+  if (onRoot.toLowerCase() === tree.root.toLowerCase()) return null;
+  const epochId = await ctx.publicClient.readContract({
+    address: CATRIS.board,
+    abi: boardAbi,
+    functionName: "currentEpoch",
+  });
+  const hash = await ctx.wallet.writeContract({
+    address: CATRIS.vault,
+    abi: vaultAbi,
+    functionName: "settleEpoch",
+    args: [epochId, tree.root, ZERO, 0n],
+    account: ctx.account,
+    chain: robinhoodChain,
+  });
+  await ctx.publicClient.waitForTransactionReceipt({ hash });
+  return hash;
 }
