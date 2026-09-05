@@ -4,6 +4,7 @@ import { HeroWell } from "@/components/game/HeroWell";
 import { HOUSE } from "@/lib/house";
 import { LETSCASH, LINKS } from "@/lib/chain";
 import { ArrowRight } from "lucide-react";
+import { ContractStrip } from "@/components/ContractStrip";
 
 export const Route = createFileRoute("/")({ component: Home });
 
@@ -43,6 +44,7 @@ function Home() {
               </a>
             </Button>
           </div>
+          <ContractStrip />
         </div>
         <HeroWell />
       </section>
