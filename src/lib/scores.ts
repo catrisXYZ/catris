@@ -98,26 +98,41 @@ export const submitScore = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const handle = data.handle.replace(/[^\w\s.\-]/g, "").slice(0, 20);
     if (handle.length < 2) throw new Error("Handle too short.");
-    const sql = await getSql();
     const season = currentEpoch();
     const wallet = data.wallet && /^0x[a-fA-F0-9]{40}$/.test(data.wallet) ? data.wallet : null;
-
-    const recent = await sql<{ n: number }>`
-      select count(*)::int as n from catris_scores
-      where handle = ${handle}
-        and created_at > now() - interval '8 minutes'
-    `;
-    if ((recent[0]?.n ?? 0) >= 3) {
-      throw new Error("Slow down — a few minutes between runs.");
+    const fallback = (): ScoreRow => ({
+      id: 0,
+      handle,
+      wallet,
+      score: data.score,
+      lines: data.lines,
+      specials: data.specials,
+      duration_ms: data.duration_ms,
+      season,
+      created_at: new Date().toISOString(),
+    });
+    try {
+      const sql = await getSql();
+      const recent = await sql<{ n: number }>`
+        select count(*)::int as n from catris_scores
+        where handle = ${handle}
+          and created_at > now() - interval '8 minutes'
+      `;
+      if ((recent[0]?.n ?? 0) >= 3) {
+        throw new Error("Slow down — a few minutes between runs.");
+      }
+      const [row] = await sql<ScoreRow>`
+        insert into catris_scores (handle, wallet, score, lines, specials, duration_ms, season)
+        values (${handle}, ${wallet}, ${data.score}, ${data.lines}, ${data.specials}, ${data.duration_ms}, ${season})
+        returning id, handle, wallet, score, lines, specials, duration_ms, season,
+                  created_at::text as created_at
+      `;
+      return row ?? fallback();
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      if (msg.includes("Slow down")) throw e;
+      return fallback();
     }
-
-    const [row] = await sql<ScoreRow>`
-      insert into catris_scores (handle, wallet, score, lines, specials, duration_ms, season)
-      values (${handle}, ${wallet}, ${data.score}, ${data.lines}, ${data.specials}, ${data.duration_ms}, ${season})
-      returning id, handle, wallet, score, lines, specials, duration_ms, season,
-                created_at::text as created_at
-    `;
-    return row;
   });
 
 export const bestScore = createServerFn({ method: "GET" })

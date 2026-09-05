@@ -1,3 +1,5 @@
+import { postBoardScore } from "@/lib/keeper/board-post";
+
 export function scoreMessage(player: string, score: number, lines: number, nonce: string) {
   return `Catris score v1:${player.toLowerCase()}:${score}:${lines}:${nonce}`;
 }
@@ -34,24 +36,19 @@ export async function signAndSubmitScore(opts: {
     params: [utf8Hex(message), opts.player],
   })) as string;
 
-  const res = await fetch("/api/keeper/submit-score", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      player: opts.player,
-      score: opts.score,
-      lines: opts.lines,
-      nonce,
-      signature,
-    }),
-  });
-  const body = (await res.json().catch(() => ({}))) as {
-    ok?: boolean;
-    tx?: string;
-    error?: string;
-  };
-  if (!res.ok || !body.ok) {
-    return { ok: false, error: body.error ?? `keeper ${res.status}` };
+  try {
+    const result = await postBoardScore({
+      data: {
+        player: opts.player,
+        score: opts.score,
+        lines: opts.lines,
+        nonce,
+        signature,
+      },
+    });
+    if (result.ok) return { ok: true, tx: result.tx };
+    return { ok: false, error: result.error ?? "keeper skipped" };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "keeper failed" };
   }
-  return { ok: true, tx: body.tx };
 }

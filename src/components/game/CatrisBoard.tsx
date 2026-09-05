@@ -249,16 +249,20 @@ export function CatrisBoard() {
       } catch {
         /* ignore */
       }
-      await submitScore({
-        data: {
-          handle,
-          wallet,
-          score: snap.score,
-          lines: snap.lines,
-          specials: snap.specials,
-          duration_ms: Math.max(1000, Math.round(snap.elapsed * 1000)),
-        },
-      });
+      try {
+        await submitScore({
+          data: {
+            handle,
+            wallet,
+            score: snap.score,
+            lines: snap.lines,
+            specials: snap.specials,
+            duration_ms: Math.max(1000, Math.round(snap.elapsed * 1000)),
+          },
+        });
+      } catch {
+        /* arena db is optional; the Well is the prize path */
+      }
       setPosted(true);
       if (wallet) {
         try {
