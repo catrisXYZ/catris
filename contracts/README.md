@@ -40,7 +40,7 @@ Hardening:
 
 1. `CatrisVault(whiskersWallet)` → Bowl
 2. `CatrisBoard()` → Well
-3. Bowl: `setBot(keeperEOA)`, `setMetadata("https://catris.xyz", "catrisXYZ", "https://github.com/catrisXYZ", "https://t.me/CatrisRH")`
+3. Bowl: `setBot(keeperEOA)`, `setMetadata("https://catris.xyz", "catrisXYZ", "https://github.com/catrisXYZ", "")`
 4. Well: `setBot(keeperEOA)`, `setVault(BOWL_CA)`
 5. Launch **CATRIS** on [letscash.fun](https://letscash.fun/launch)
    - Name `Catris`, symbol `CATRIS`, pair ETH

@@ -14,9 +14,7 @@ const NAV = [
 
 const SOCIAL = [
   { href: LINKS.site, label: "catris.xyz" },
-  { href: LINKS.launchpad, label: "letscash.fun" },
   { href: LINKS.x, label: "X" },
-  { href: LINKS.telegram, label: "TG community" },
   { href: LINKS.github, label: "GitHub" },
 ] as const;
 

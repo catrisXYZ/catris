@@ -37,8 +37,8 @@ function Home() {
               <Link to="/house" search={{ room: "bowl" }}>Visit the house</Link>
             </Button>
             <Button variant="ghost" size="lg" asChild>
-              <a href={LINKS.telegram} target="_blank" rel="noreferrer">
-                Join @CatrisRH
+              <a href={LINKS.x} target="_blank" rel="noreferrer">
+                Follow @catrisXYZ
               </a>
             </Button>
           </div>

@@ -26,7 +26,7 @@ function DocsPage() {
         <Row k="Well" v="catris.xyz/arena" href={`${LINKS.site}/arena`} />
         <Row k="House" v="catris.xyz/house" href={`${LINKS.site}/house`} />
         <Row k="X" v={`@${LINKS.xHandle}`} href={LINKS.x} />
-        <Row k="TG community" v={`@${LINKS.telegramHandle}`} href={LINKS.telegram} />
+        <Row k="GitHub" v={LINKS.githubUser} href={LINKS.github} />
       </dl>
 
       <Section title="The well">
@@ -157,7 +157,7 @@ function DocsPage() {
           <li>
             Bowl: <code>setBot(keeperEOA)</code>, then{" "}
             <code className="break-all">
-              setMetadata("{LINKS.site}", "{LINKS.xHandle}", "{LINKS.github}", "{LINKS.telegram}")
+              setMetadata("{LINKS.site}", "{LINKS.xHandle}", "{LINKS.github}", "")
             </code>
           </li>
           <li>

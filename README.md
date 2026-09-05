@@ -6,7 +6,6 @@ Fifteen-minute pots. Treats land in a vault — never an EOA.
 - Play: [catris.xyz](https://catris.xyz)
 - House: [catris.xyz/house](https://catris.xyz/house)
 - X: [@catrisXYZ](https://x.com/catrisXYZ)
-- Telegram: [@CatrisRH](https://t.me/CatrisRH)
 - Door: [letscash.fun](https://letscash.fun/launch)
 
 ## The house

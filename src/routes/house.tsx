@@ -137,7 +137,7 @@ function HousePage() {
 const OPENING = [
   "Deploy the Bowl with the Whiskers wallet. Verify on Blockscout.",
   "Deploy the Well. No constructor args. Verify.",
-  "Bowl: setBot(keeper), setMetadata(site, X, GitHub, Telegram).",
+  "Bowl: setBot(keeper), setMetadata(site, X, GitHub).",
   "Well: setBot(keeper), setVault(Bowl).",
   "Launch Catris / CATRIS on letscash.fun. Pair ETH. Image: token-logo.jpg.",
   "From the launch wallet: updateCreator(poolId, Bowl). Never an EOA.",
