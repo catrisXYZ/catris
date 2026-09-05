@@ -46,7 +46,7 @@ function ArenaPage() {
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
         <div>
-          <p className="text-xs tracking-[0.2em] text-accent uppercase">The well · live</p>
+          <p className="seal">The well · live</p>
           <div className="mt-2 flex flex-wrap items-end justify-between gap-3">
             <h1 className="font-display text-4xl italic tracking-tight">
               Epoch {live?.epoch ?? epoch ?? "—"}

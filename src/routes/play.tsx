@@ -12,8 +12,8 @@ function PlayPage() {
         <h1 className="font-display text-xl italic tracking-tight sm:text-3xl">The well</h1>
         <div className="text-right">
           <p className="font-display text-lg tabular text-accent sm:text-2xl">{clock}</p>
-          <p className="text-[10px] text-muted sm:text-[11px]">
-            Epoch {epoch ?? "—"} · 60%
+          <p className="seal text-[10px] sm:text-[11px]">
+            Epoch {epoch ?? "—"} · litter clock
           </p>
         </div>
       </div>

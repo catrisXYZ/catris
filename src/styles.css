@@ -2,19 +2,21 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #100e0c;
-  --color-surface: #1a1714;
-  --color-elevated: #24201c;
-  --color-fg: #f3ead8;
-  --color-muted: #9a9084;
-  --color-subtle: #6f675e;
-  --color-accent: #e07a5f;
-  --color-accent-fg: #140e0c;
-  --color-border: color-mix(in oklab, var(--color-fg) 12%, transparent);
-  --color-border-strong: color-mix(in oklab, var(--color-fg) 22%, transparent);
-  --color-ok: #7d9b76;
-  --color-warn: #c4a574;
-  --color-danger: #c46b5a;
+  --color-bg: #160f0c;
+  --color-surface: #211814;
+  --color-elevated: #2c1f19;
+  --color-fg: #f6ecdc;
+  --color-muted: #b39a86;
+  --color-subtle: #7d6a5c;
+  --color-accent: #d4563a;
+  --color-accent-fg: #fff6ee;
+  --color-jade: #6f8f74;
+  --color-ink: #1a100c;
+  --color-border: color-mix(in oklab, var(--color-fg) 14%, transparent);
+  --color-border-strong: color-mix(in oklab, var(--color-accent) 28%, transparent);
+  --color-ok: #6f8f74;
+  --color-warn: #c9a06a;
+  --color-danger: #c45c4a;
 
   --font-sans: "Figtree", system-ui, sans-serif;
   --font-display: "Fraunces", Georgia, serif;
@@ -44,7 +46,18 @@
 
   body {
     font-family: var(--font-sans);
-    background: var(--color-bg);
+    background-color: var(--color-bg);
+    background-image:
+      radial-gradient(circle at 12% -10%, color-mix(in oklab, var(--color-accent) 16%, transparent), transparent 42%),
+      radial-gradient(circle at 100% 0%, color-mix(in oklab, var(--color-ok) 10%, transparent), transparent 36%),
+      repeating-radial-gradient(
+        circle at 0 8px,
+        transparent 0,
+        transparent 10px,
+        color-mix(in oklab, var(--color-accent) 7%, transparent) 11px,
+        transparent 12px
+      );
+    background-size: auto, auto, 42px 21px;
     color: var(--color-fg);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
@@ -67,6 +80,14 @@
 
 @utility tabular {
   font-variant-numeric: tabular-nums;
+}
+
+@utility seal {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--color-accent);
 }
 
 @media (prefers-reduced-motion: reduce) {

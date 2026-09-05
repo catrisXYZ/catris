@@ -24,9 +24,9 @@ function HousePage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <p className="text-xs tracking-[0.2em] text-muted uppercase">The house</p>
+      <p className="seal">The house</p>
       <h1 className="mt-2 font-display text-4xl italic tracking-tight sm:text-5xl">
-        Five rooms. Two contracts.
+        Five rooms. A quiet courtyard.
       </h1>
       <p className="mt-4 max-w-2xl text-muted leading-relaxed">
         Cats in the well. Treats in the bowl. Pounce drinks first, cream for

@@ -10,7 +10,7 @@ function DocsPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
       <PageWell variant="docs" />
-      <p className="mt-8 text-xs tracking-[0.2em] text-muted uppercase">Manual</p>
+      <p className="mt-8 seal">Manual</p>
       <h1 className="mt-2 font-display text-4xl italic tracking-tight">
         How the cats behave
       </h1>

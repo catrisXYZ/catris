@@ -13,9 +13,7 @@ function Home() {
     <div>
       <section className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:py-20">
         <div>
-          <p className="text-xs tracking-[0.22em] text-muted uppercase">
-            Tetris with cats · Robinhood Chain
-          </p>
+          <p className="seal">Garden of falling cats · Robinhood Chain</p>
           <h1 className="mt-4 font-display text-5xl leading-[1.05] tracking-tight italic sm:text-6xl lg:text-7xl">
             Cats fall.
             <br />
@@ -24,19 +22,19 @@ function Home() {
             The cats always land.
           </h1>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
-            Original js13k kittens, overflowing the cell on purpose. Ten by
-            twenty. Fifteen-minute pots. Treats land in a bowl contract — never
-            a personal wallet.
+            Original js13k kittens, overflowing the cell on purpose. A quiet
+            garden, a loud stack. Fifteen-minute pots. Treats land in a bowl
+            contract — never a personal wallet.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button variant="accent" size="lg" asChild>
               <Link to="/play">
-                Play Catris
+                Enter the well
                 <ArrowRight className="size-4" />
               </Link>
             </Button>
             <Button variant="outline" size="lg" asChild>
-              <Link to="/house" search={{ room: "bowl" }}>Tour the house</Link>
+              <Link to="/house" search={{ room: "bowl" }}>Visit the house</Link>
             </Button>
             <Button variant="ghost" size="lg" asChild>
               <a href={LINKS.telegram} target="_blank" rel="noreferrer">
@@ -82,7 +80,7 @@ function Home() {
                 <Link
                   to="/house"
                   search={{ room: room.id }}
-                  className="block h-full rounded-xl border border-border bg-surface p-5 transition-colors duration-150 hover:border-border-strong hover:bg-elevated"
+                  className="block h-full rounded-xl border border-border border-l-2 border-l-accent bg-surface p-5 transition-colors duration-150 hover:border-border-strong hover:bg-elevated"
                 >
                   <p className="text-xs tracking-widest text-muted uppercase">{room.kicker}</p>
                   <p className="mt-2 font-display text-xl italic">{room.name}</p>
@@ -122,7 +120,7 @@ function Feature({
 }) {
   return (
     <article>
-      <p className="font-mono text-xs text-subtle">{kicker}</p>
+      <p className="seal">{kicker}</p>
       <h3 className="mt-2 font-display text-2xl italic">{title}</h3>
       <p className="mt-2 text-sm leading-relaxed text-muted">{body}</p>
     </article>
