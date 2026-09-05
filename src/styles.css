@@ -2,16 +2,19 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #160f0c;
-  --color-surface: #211814;
-  --color-elevated: #2c1f19;
+  --color-bg: #14131c;
+  --color-surface: #1e1a1c;
+  --color-elevated: #2a2320;
   --color-fg: #f6ecdc;
   --color-muted: #b39a86;
   --color-subtle: #7d6a5c;
   --color-accent: #d4563a;
   --color-accent-fg: #fff6ee;
   --color-jade: #6f8f74;
-  --color-ink: #1a100c;
+  --color-ink: #12101a;
+  --color-sky: #3a4e68;
+  --color-dusk: #6a4a58;
+  --color-moss: #4d6a52;
   --color-border: color-mix(in oklab, var(--color-fg) 14%, transparent);
   --color-border-strong: color-mix(in oklab, var(--color-accent) 28%, transparent);
   --color-ok: #6f8f74;
@@ -34,7 +37,7 @@
 
 @layer base {
   html {
-    background: var(--color-bg);
+    background: var(--color-ink);
     color: var(--color-fg);
   }
 
@@ -46,18 +49,7 @@
 
   body {
     font-family: var(--font-sans);
-    background-color: var(--color-bg);
-    background-image:
-      radial-gradient(circle at 12% -10%, color-mix(in oklab, var(--color-accent) 16%, transparent), transparent 42%),
-      radial-gradient(circle at 100% 0%, color-mix(in oklab, var(--color-ok) 10%, transparent), transparent 36%),
-      repeating-radial-gradient(
-        circle at 0 8px,
-        transparent 0,
-        transparent 10px,
-        color-mix(in oklab, var(--color-accent) 7%, transparent) 11px,
-        transparent 12px
-      );
-    background-size: auto, auto, 42px 21px;
+    background: var(--color-ink);
     color: var(--color-fg);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
@@ -88,6 +80,88 @@
   letter-spacing: 0.28em;
   text-transform: uppercase;
   color: var(--color-accent);
+}
+
+.garden-sky {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.garden-sky__wash {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 90% 55% at 50% -8%, color-mix(in oklab, var(--color-sky) 70%, white 8%), transparent 62%),
+    radial-gradient(ellipse 50% 40% at 8% 18%, color-mix(in oklab, var(--color-dusk) 55%, transparent), transparent 70%),
+    linear-gradient(180deg, #2a3348 0%, #1a1520 42%, #12101a 100%);
+}
+
+.garden-sky__moon {
+  position: absolute;
+  top: 7%;
+  right: 12%;
+  width: 88px;
+  height: 88px;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 35% 35%, #f6ecdc, #e2c9a0 55%, #c9a06a 100%);
+  box-shadow: 0 0 60px 16px color-mix(in oklab, #f6ecdc 28%, transparent);
+  opacity: 0.7;
+}
+
+.garden-sky__lantern {
+  position: absolute;
+  top: -8%;
+  left: -6%;
+  width: 42vw;
+  height: 42vw;
+  border-radius: 9999px;
+  background: radial-gradient(circle, color-mix(in oklab, var(--color-accent) 38%, transparent), transparent 68%);
+}
+
+.garden-sky__hill {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  border-radius: 50% 50% 0 0;
+}
+
+.garden-sky__hill--far {
+  bottom: -18%;
+  height: 42%;
+  background: radial-gradient(ellipse at 50% 0%, color-mix(in oklab, var(--color-moss) 55%, #1a2030), #152018);
+  opacity: 0.85;
+}
+
+.garden-sky__hill--near {
+  bottom: -28%;
+  height: 38%;
+  background: radial-gradient(ellipse at 40% 0%, color-mix(in oklab, var(--color-ink) 40%, var(--color-moss)), #0e0c12);
+  opacity: 0.92;
+}
+
+.garden-sky__mist {
+  position: absolute;
+  inset: auto 0 0;
+  height: 36%;
+  background: linear-gradient(180deg, transparent, color-mix(in oklab, var(--color-ink) 75%, transparent));
+}
+
+.garden-sky__wave {
+  position: absolute;
+  inset: 0;
+  opacity: 0.14;
+  background-image: repeating-radial-gradient(
+    circle at 0 10px,
+    transparent 0,
+    transparent 11px,
+    color-mix(in oklab, var(--color-fg) 40%, transparent) 12px,
+    transparent 13px
+  );
+  background-size: 48px 24px;
+  mix-blend-mode: soft-light;
 }
 
 @media (prefers-reduced-motion: reduce) {

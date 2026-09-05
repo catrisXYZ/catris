@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { WalletButton } from "@/components/wallet/WalletButton";
+import { GardenSky } from "@/components/layout/GardenSky";
 import { LINKS } from "@/lib/chain";
 import { cn } from "@/lib/utils";
 
@@ -21,8 +22,9 @@ const SOCIAL = [
 export function SiteShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   return (
-    <div className="min-h-dvh bg-bg text-fg">
-      <header className="sticky top-0 z-30 border-b border-border bg-bg/90 backdrop-blur-md">
+    <div className="relative min-h-dvh text-fg">
+      <GardenSky />
+      <header className="sticky top-0 z-30 border-b border-border bg-ink/55 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
           <Link to="/" className="flex items-baseline gap-2">
             <span className="inline-block size-2.5 rounded-sm bg-accent" aria-hidden />
@@ -56,9 +58,9 @@ export function SiteShell({ children }: { children: ReactNode }) {
           <WalletButton />
         </div>
       </header>
-      <main>{children}</main>
+      <main className="relative z-10">{children}</main>
       {pathname !== "/play" && (
-      <footer className="border-t border-border">
+      <footer className="relative z-10 border-t border-border bg-ink/40">
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-8 text-sm text-muted sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <p>A garden of falling cats. The Bowl pays. The cats always land.</p>
           <nav className="flex flex-wrap items-center gap-x-4 gap-y-1">
