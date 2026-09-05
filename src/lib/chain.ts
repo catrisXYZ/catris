@@ -69,15 +69,17 @@ function addr(key: string, fallback: Address = ZERO): Address {
   return fromEnv !== ZERO ? fromEnv : fallback;
 }
 
-/** Live Bowl + Well. Token stays zero until letscash CA is pasted. */
+/** Live Bowl, Well, and $CATRIS. Env vars override if set. */
 export const CATRIS = {
   name: "Catris",
   symbol: "CATRIS",
   creatorTaxBps: 100,
-  token: addr("VITE_TOKEN_CA"),
+  token: addr("VITE_TOKEN_CA", "0x305cFA66eC6F2Db53a37F9c3EdeDcc95Cc2aC8cc"),
   vault: addr("VITE_VAULT_CA", "0x9Ae3421e6537eEEdea456c56b7A96AEE6fF59AB6"),
   board: addr("VITE_BOARD_CA", "0xc0a3585E448dCa1785558069333D620eA55452f9"),
-  poolId: ((import.meta.env as Record<string, string | undefined>).VITE_POOL_ID ?? "").trim(),
+  poolId:
+    ((import.meta.env as Record<string, string | undefined>).VITE_POOL_ID ?? "").trim() ||
+    "0xf0bc861a3c8e3ec937801b9865bd25dc0335bfd5ce1f20453138f4b2cff86dbc",
 } as const;
 
 /** Official Catris surfaces. Vault.setMetadata uses these strings. */

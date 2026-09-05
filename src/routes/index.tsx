@@ -94,10 +94,10 @@ function Home() {
             ))}
           </ol>
           <p className="mt-6 text-sm text-muted">
-            $CATRIS launches on{" "}
+            $CATRIS is live on{" "}
             <a
               className="underline decoration-border underline-offset-4 hover:text-fg"
-              href={LETSCASH.launch}
+              href={LETSCASH.site}
               target="_blank"
               rel="noreferrer"
             >
