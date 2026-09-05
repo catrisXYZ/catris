@@ -15,6 +15,9 @@ import { Route as DocsRouteImport } from './routes/docs'
 import { Route as HouseRouteImport } from './routes/house'
 import { Route as PlayRouteImport } from './routes/play'
 import { Route as TreasuryRouteImport } from './routes/treasury'
+import { Route as ApiKeeperStatusRouteImport } from './routes/api/keeper/status'
+import { Route as ApiKeeperSubmitScoreRouteImport } from './routes/api/keeper/submit-score'
+import { Route as ApiKeeperTickRouteImport } from './routes/api/keeper/tick'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +49,21 @@ const TreasuryRoute = TreasuryRouteImport.update({
   path: '/treasury',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiKeeperStatusRoute = ApiKeeperStatusRouteImport.update({
+  id: '/api/keeper/status',
+  path: '/api/keeper/status',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiKeeperSubmitScoreRoute = ApiKeeperSubmitScoreRouteImport.update({
+  id: '/api/keeper/submit-score',
+  path: '/api/keeper/submit-score',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiKeeperTickRoute = ApiKeeperTickRouteImport.update({
+  id: '/api/keeper/tick',
+  path: '/api/keeper/tick',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +72,9 @@ export interface FileRoutesByFullPath {
   '/house': typeof HouseRoute
   '/play': typeof PlayRoute
   '/treasury': typeof TreasuryRoute
+  '/api/keeper/status': typeof ApiKeeperStatusRoute
+  '/api/keeper/submit-score': typeof ApiKeeperSubmitScoreRoute
+  '/api/keeper/tick': typeof ApiKeeperTickRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +83,9 @@ export interface FileRoutesByTo {
   '/house': typeof HouseRoute
   '/play': typeof PlayRoute
   '/treasury': typeof TreasuryRoute
+  '/api/keeper/status': typeof ApiKeeperStatusRoute
+  '/api/keeper/submit-score': typeof ApiKeeperSubmitScoreRoute
+  '/api/keeper/tick': typeof ApiKeeperTickRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,13 +95,44 @@ export interface FileRoutesById {
   '/house': typeof HouseRoute
   '/play': typeof PlayRoute
   '/treasury': typeof TreasuryRoute
+  '/api/keeper/status': typeof ApiKeeperStatusRoute
+  '/api/keeper/submit-score': typeof ApiKeeperSubmitScoreRoute
+  '/api/keeper/tick': typeof ApiKeeperTickRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/arena' | '/docs' | '/house' | '/play' | '/treasury'
+  fullPaths:
+    | '/'
+    | '/arena'
+    | '/docs'
+    | '/house'
+    | '/play'
+    | '/treasury'
+    | '/api/keeper/status'
+    | '/api/keeper/submit-score'
+    | '/api/keeper/tick'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/arena' | '/docs' | '/house' | '/play' | '/treasury'
-  id: '__root__' | '/' | '/arena' | '/docs' | '/house' | '/play' | '/treasury'
+  to:
+    | '/'
+    | '/arena'
+    | '/docs'
+    | '/house'
+    | '/play'
+    | '/treasury'
+    | '/api/keeper/status'
+    | '/api/keeper/submit-score'
+    | '/api/keeper/tick'
+  id:
+    | '__root__'
+    | '/'
+    | '/arena'
+    | '/docs'
+    | '/house'
+    | '/play'
+    | '/treasury'
+    | '/api/keeper/status'
+    | '/api/keeper/submit-score'
+    | '/api/keeper/tick'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -87,6 +142,9 @@ export interface RootRouteChildren {
   HouseRoute: typeof HouseRoute
   PlayRoute: typeof PlayRoute
   TreasuryRoute: typeof TreasuryRoute
+  ApiKeeperStatusRoute: typeof ApiKeeperStatusRoute
+  ApiKeeperSubmitScoreRoute: typeof ApiKeeperSubmitScoreRoute
+  ApiKeeperTickRoute: typeof ApiKeeperTickRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -133,6 +191,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TreasuryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/keeper/status': {
+      id: '/api/keeper/status'
+      path: '/api/keeper/status'
+      fullPath: '/api/keeper/status'
+      preLoaderRoute: typeof ApiKeeperStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/keeper/submit-score': {
+      id: '/api/keeper/submit-score'
+      path: '/api/keeper/submit-score'
+      fullPath: '/api/keeper/submit-score'
+      preLoaderRoute: typeof ApiKeeperSubmitScoreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/keeper/tick': {
+      id: '/api/keeper/tick'
+      path: '/api/keeper/tick'
+      fullPath: '/api/keeper/tick'
+      preLoaderRoute: typeof ApiKeeperTickRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -143,6 +222,9 @@ const rootRouteChildren: RootRouteChildren = {
   HouseRoute: HouseRoute,
   PlayRoute: PlayRoute,
   TreasuryRoute: TreasuryRoute,
+  ApiKeeperStatusRoute: ApiKeeperStatusRoute,
+  ApiKeeperSubmitScoreRoute: ApiKeeperSubmitScoreRoute,
+  ApiKeeperTickRoute: ApiKeeperTickRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

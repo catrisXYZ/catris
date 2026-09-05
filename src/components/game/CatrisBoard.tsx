@@ -21,7 +21,6 @@ import {
 } from "@/lib/game/audio";
 import { submitScore } from "@/lib/scores";
 import { signAndSubmitScore } from "@/lib/keeper-client";
-import { KEEPER_URL } from "@/lib/chain";
 import { formatScore } from "@/lib/utils";
 import { useWallet } from "@/lib/wallet/store";
 import { Pause, Play, Volume2, VolumeX } from "lucide-react";
@@ -261,7 +260,7 @@ export function CatrisBoard() {
         },
       });
       setPosted(true);
-      if (wallet && KEEPER_URL) {
+      if (wallet) {
         try {
           const onchain = await signAndSubmitScore({
             player: wallet,

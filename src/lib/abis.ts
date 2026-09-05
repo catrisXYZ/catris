@@ -15,6 +15,13 @@ export const letscashHookAbi = [
   },
   {
     type: "function",
+    name: "pending",
+    stateMutability: "view",
+    inputs: [{ name: "poolId", type: "bytes32" }],
+    outputs: [{ type: "uint256" }],
+  },
+  {
+    type: "function",
     name: "updateCreator",
     stateMutability: "nonpayable",
     inputs: [
@@ -68,6 +75,18 @@ export const vaultAbi = [
     inputs: [{ name: "player", type: "address" }],
     outputs: [{ type: "bool" }],
   },
+  {
+    type: "function",
+    name: "settleEpoch",
+    stateMutability: "nonpayable",
+    inputs: [
+      { name: "epochId", type: "uint256" },
+      { name: "merkleRoot", type: "bytes32" },
+      { name: "winner", type: "address" },
+      { name: "winnerPrize", type: "uint256" },
+    ],
+    outputs: [],
+  },
   { type: "receive", stateMutability: "payable" },
 ] as const;
 
@@ -105,6 +124,37 @@ export const boardAbi = [
       { name: "winner", type: "address" },
       { name: "score", type: "uint256" },
       { name: "lines", type: "uint256" },
+    ],
+  },
+  {
+    type: "function",
+    name: "submitScore",
+    stateMutability: "nonpayable",
+    inputs: [
+      { name: "player", type: "address" },
+      { name: "score", type: "uint256" },
+      { name: "lines", type: "uint256" },
+      { name: "nonce", type: "bytes32" },
+    ],
+    outputs: [{ name: "isNewLeader", type: "bool" }],
+  },
+  {
+    type: "function",
+    name: "markSettled",
+    stateMutability: "nonpayable",
+    inputs: [{ name: "epochId", type: "uint256" }],
+    outputs: [],
+  },
+  {
+    type: "function",
+    name: "epochs",
+    stateMutability: "view",
+    inputs: [{ name: "epochId", type: "uint256" }],
+    outputs: [
+      { name: "winner", type: "address" },
+      { name: "topScore", type: "uint256" },
+      { name: "topLines", type: "uint256" },
+      { name: "settled", type: "bool" },
     ],
   },
 ] as const;

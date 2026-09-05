@@ -1,5 +1,3 @@
-import { KEEPER_URL } from "@/lib/chain";
-
 export function scoreMessage(player: string, score: number, lines: number, nonce: string) {
   return `Catris score v1:${player.toLowerCase()}:${score}:${lines}:${nonce}`;
 }
@@ -23,10 +21,10 @@ export async function signAndSubmitScore(opts: {
   score: number;
   lines: number;
 }): Promise<{ ok: boolean; tx?: string; error?: string; skipped?: boolean }> {
-  if (!KEEPER_URL) return { ok: false, skipped: true, error: "keeper offline" };
-  const eth = (typeof window !== "undefined"
-    ? (window as unknown as { ethereum?: Eth }).ethereum
-    : undefined) ?? null;
+  const eth =
+    (typeof window !== "undefined"
+      ? (window as unknown as { ethereum?: Eth }).ethereum
+      : undefined) ?? null;
   if (!eth) return { ok: false, skipped: true, error: "no wallet" };
 
   const nonce = randomNonce();
@@ -36,7 +34,7 @@ export async function signAndSubmitScore(opts: {
     params: [utf8Hex(message), opts.player],
   })) as string;
 
-  const res = await fetch(`${KEEPER_URL}/submit-score`, {
+  const res = await fetch("/api/keeper/submit-score", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
