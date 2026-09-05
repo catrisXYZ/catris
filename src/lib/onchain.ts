@@ -61,3 +61,75 @@ export const readWellLeader = createServerFn({ method: "GET" }).handler(async ()
     return null;
   }
 });
+
+export type WellRun = {
+  epoch: string;
+  winner: string;
+  score: string;
+  lines: string;
+  settled: boolean;
+};
+
+export const readWellLive = createServerFn({ method: "GET" }).handler(async () => {
+  if (!isDeployed(CATRIS.board)) {
+    return null as {
+      epoch: string;
+      leader: WellRun | null;
+      last: WellRun | null;
+      history: WellRun[];
+      prize: string;
+    } | null;
+  }
+  const client = createPublicClient({
+    chain: robinhoodChain,
+    transport: http(robinhoodChain.rpcUrls.default.http[0]),
+  });
+  try {
+    const [epoch, leader, buckets] = await Promise.all([
+      client.readContract({ address: CATRIS.board, abi: boardAbi, functionName: "currentEpoch" }),
+      client.readContract({ address: CATRIS.board, abi: boardAbi, functionName: "getCurrentLeader" }),
+      client.readContract({ address: CATRIS.vault, abi: vaultAbi, functionName: "buckets" }),
+    ]);
+    const [leadAddr, leadScore] = leader;
+    const current: WellRun | null =
+      leadAddr && leadAddr !== zeroAddress && leadScore > 0n
+        ? {
+            epoch: epoch.toString(),
+            winner: leadAddr,
+            score: leadScore.toString(),
+            lines: "0",
+            settled: false,
+          }
+        : null;
+
+    const history: WellRun[] = [];
+    for (let i = 1; i <= 8; i++) {
+      const id = epoch - BigInt(i);
+      if (id < 0n) break;
+      const rec = await client.readContract({
+        address: CATRIS.board,
+        abi: boardAbi,
+        functionName: "epochs",
+        args: [id],
+      });
+      const [winner, topScore, topLines, settled] = rec;
+      if (winner === zeroAddress || topScore === 0n) continue;
+      history.push({
+        epoch: id.toString(),
+        winner,
+        score: topScore.toString(),
+        lines: topLines.toString(),
+        settled,
+      });
+    }
+    return {
+      epoch: epoch.toString(),
+      leader: current,
+      last: history[0] ?? null,
+      history,
+      prize: buckets[0].toString(),
+    };
+  } catch {
+    return null;
+  }
+});
